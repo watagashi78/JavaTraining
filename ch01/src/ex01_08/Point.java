@@ -3,6 +3,14 @@ package ex01_08;
 public class Point {
 	public double x, y;
 
+	/**
+	 * デフォルトコンストラクタ.
+	 */
+	public Point() {
+		x = 0.0;
+		y = 0.0;
+	}
+
 	/** 原点を表すstaticフィールドorigin
 	 * (全てのPointオブジェクトで共有されるフィールド).
 	 */
