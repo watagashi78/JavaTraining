@@ -10,8 +10,8 @@ public class Walkman {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Music trac1 = new Music("スガシカオ", "春夏秋冬");
-		Music trac2 = new Music("QUEEN", "Don't Stop Me Now.");
+		Music trac1 = new Music("QUEEN", "Don't Stop Me Now.");
+		//Music trac2 = new Music();
 
 		Walkman wm1 = new Walkman();
 		System.out.println("##### Walkman Base Model ######");
@@ -19,11 +19,11 @@ public class Walkman {
 
 		Walkman2nd wm2 = new Walkman2nd();
 		System.out.println("##### Walkman 2nd Model ######");
-		wm2.listen(trac1, trac2);
+		wm2.listen(trac1);
 
 		Walkman3rd wm3 = new Walkman3rd();
 		System.out.println("##### Walkman 3rd Model ######");
-		wm3.listen(trac1, trac2);
+		wm3.listen(trac1);
 		wm3.talk();
 	}
 
@@ -32,7 +32,7 @@ public class Walkman {
 	 * @param trac 曲
 	 */
 	public void listen(Music trac) {
-		System.out.print("Use " + terminal + " : ");
+		System.out.println("Use " + terminal + ".");
 		trac.startMusic();
 	}
 

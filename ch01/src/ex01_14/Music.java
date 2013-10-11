@@ -15,6 +15,10 @@ public class Music {
 	}
 
 	public void startMusic() {
-		System.out.println("Music Start -> " + musicTitle + " by " + artist);
+		if (artist.equals("Empty")) {
+			System.out.println("Please put Music into this WalkMan.");
+		} else {
+			System.out.println("Music Start -> " + musicTitle + " by " + artist);
+		}
 	}
 }
