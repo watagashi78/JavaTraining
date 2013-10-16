@@ -11,6 +11,17 @@ public class Point {
 		y = 0.0;
 	}
 
+	/**
+	 * 引数ありのコンストラクタ.
+	 * @param x
+	 * @param y
+	 */
+	public Point(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+
+
 	/** 原点を表すstaticフィールドorigin
 	 * (全てのPointオブジェクトで共有されるフィールド).
 	 */
