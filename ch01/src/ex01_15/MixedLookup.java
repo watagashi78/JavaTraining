@@ -6,10 +6,25 @@ public class MixedLookup implements ChangedLookup {
 	private ArrayList<String> names = new ArrayList<String>();
 	private ArrayList<Object> values = new ArrayList<Object>();
 
-	public MixedLookup() {
+	/**
+	 * デフォルトコンストラクタ.
+	 */
+	public MixedLookup() {}
 
+	/**
+	 * 引数ありコンストラクタ.
+	 * @param name
+	 * @param value
+	 */
+	public MixedLookup(String name, Object value) {
+		names.add(name);
+		values.add(value);
 	}
 
+	/**
+	 * リストの中にnameがあればそのnameのvalueを返し、
+	 * なければnullを返すメソッド.
+	 */
 	public Object find(String name) {
 		for (int i = 0; i < names.size(); i++) {
 			if (names.get(i).equals(name))
@@ -18,13 +33,23 @@ public class MixedLookup implements ChangedLookup {
 		return null;
 	}
 
+	/**
+	 * nameとvalueのセットを加えるメソッド.
+	 */
 	public void add(String name, Object value) {
 		names.add(name);
 		values.add(value);
 	}
 
+	/**
+	 * namesリストの中でnamesに一致するvaluestとnameを削除するメソッド.
+	 */
 	public void remove(String name) {
-		values.remove(names.indexOf(name));
-		names.remove(name);
+		if (this.find(name) == null) {
+			System.out.println(name + "は存在しません");
+		} else {
+			values.remove(names.indexOf(name));
+			names.remove(name);
+		}
 	}
 }
