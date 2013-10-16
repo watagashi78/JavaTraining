@@ -9,7 +9,6 @@ public class PointTest {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		System.out.println("TearDownAfterClass");
 	}
 
 	@Test
