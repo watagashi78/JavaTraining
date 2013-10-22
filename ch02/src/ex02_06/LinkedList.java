@@ -2,8 +2,8 @@ package ex02_06;
 
 public class LinkedList {
 	private int size = 0;
-	public Node first;
-	public Node last;
+	public Node first = new Node("First");
+	public Node last = new Node("Last");
 
 	public static void main(String[] args) {
 		Vehicle car1 = new Vehicle(100.0, 0.0, "hase");
