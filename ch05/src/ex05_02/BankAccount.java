@@ -19,7 +19,13 @@ public class BankAccount {
 		}
 	}
 
-	public class History {
+	/**
+	 * HistoryクラスはBankAccount特有のクラスであるためネストしたクラスとする.
+	 * また、エンクロージング(外部)クラスのprivateフィールドにアクセスする必要がないため、
+	 * staticのネストしたクラスとする.
+	 * @author Takashi
+	 */
+	public static class History {
 		private Action acts[] = new Action[10];
 		private int index = 0;
 
@@ -52,30 +58,25 @@ public class BankAccount {
 
 	public void deposit(long amount) {
 		balance += amount;
-		lastAct = new Action("deposit", amount);
+		lastAct = this.new Action("deposit", amount);
 		history.add(lastAct);
 	}
 
 	public void withdraw(long amount) {
 		balance -= amount;
-		lastAct = new Action("withdraw", amount);
+		lastAct = this.new Action("withdraw", amount);
 		history.add(lastAct);
 	}
 
-	public static void main(String args[]) {
-		BankAccount hase = new BankAccount();
-		hase.deposit(100);
-		hase.withdraw(60);
-		hase.withdraw(40);
-		hase.deposit(1);
-		hase.deposit(2);
-		hase.deposit(3);
-		hase.deposit(4);
-		hase.deposit(5);
-		hase.deposit(6);
-		hase.deposit(7);
-		hase.history.show();
-		hase.deposit(8);
-		hase.history.show();
+	/**
+	 * 他の口座から引き出して現在の口座へ入金する.
+	 * @param other 他の口座
+	 * @param amount 入金額
+	 */
+	public void transfer(BankAccount other, long amount) {
+		other.withdraw(amount);
+		this.deposit(amount);
+		lastAct = this.new Action("transfer", amount);
+		other.lastAct = other.new Action("transfer", amount);
 	}
 }
