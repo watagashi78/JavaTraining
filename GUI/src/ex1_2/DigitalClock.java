@@ -50,6 +50,7 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 	DigitalClock(String title) {
 		this.setTitle(title);
 		this.setLayout(new FlowLayout());
+		this.setResizable(false);
 		MenuBar menuBar = new MenuBar();
 		this.setMenuBar(menuBar);
 
