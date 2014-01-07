@@ -175,26 +175,4 @@ public class PropertyDialog extends Dialog implements ActionListener {
 	public Color getBackground() {
 		return background;
 	}
-
-	public int getWindowWidth() {
-		return 600;
-	}
-
-	public int getWindowHeight() {
-		if (Integer.parseInt(fsize.getSelectedItem()) < 40) {
-			return 200;
-		} else if (Integer.parseInt(fsize.getSelectedItem()) < 50) {
-			return 250;
-		} else if (Integer.parseInt(fsize.getSelectedItem()) < 60) {
-			return 300;
-		} else if (Integer.parseInt(fsize.getSelectedItem()) < 70) {
-			return 350;
-		} else if (Integer.parseInt(fsize.getSelectedItem()) < 80) {
-			return 400;
-		} else if (Integer.parseInt(fsize.getSelectedItem()) < 90) {
-			return 450;
-		} else {
-			return 500;
-		}
-	}
 }

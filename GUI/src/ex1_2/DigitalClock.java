@@ -151,7 +151,6 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 		} else {
 			width = 600;
 		}
-
 		return width;
 	}
 
@@ -172,7 +171,6 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 		} else {
 			height = 320;
 		}
-
 		return height;
 	}
 }
