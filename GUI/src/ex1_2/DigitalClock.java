@@ -24,7 +24,6 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 	private Font oldfont = new Font("TimesRoman", Font.BOLD, 48);
 	private Color oldTextcolor;
 	private Color oldBackground;
-	private Dimension oldWindowSize = new Dimension(600, 200);
 	private Dimension size;
 	private Image imgBuffer;
 	private Graphics buffer;
@@ -120,6 +119,7 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 		g.drawImage(imgBuffer, 0, 0, this);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "プロパティ":
