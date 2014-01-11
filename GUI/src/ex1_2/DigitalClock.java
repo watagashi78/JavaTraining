@@ -141,6 +141,10 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 		}
 	}
 
+	public void update(Graphics g) {
+		paint(g);
+	}
+
 	public String getStringTime(int h, int m, int s) {
 		String time = "";
 		if (h < 10) {
