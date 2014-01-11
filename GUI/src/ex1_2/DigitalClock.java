@@ -1,9 +1,9 @@
 package ex1_2;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -21,13 +21,14 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 	private Thread thread = new Thread(this);
 	private PropertyDialog dlg;
 	private boolean propFlag = false;
-	private Font oldfont = new Font("TimesRoman", Font.BOLD, 48);
-	private Color oldTextcolor;
-	private Color oldBackground;
+
+	private Font tmpFont = new Font("7barP", Font.BOLD, 50);
+
 	private Dimension size;
 	private Image imgBuffer;
 	private Graphics buffer;
 
+	private final static int MARGIN = 50;
 
 	/**
 	 * デジタル時計に次の機能追加を行ってください。
@@ -91,31 +92,36 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 	}
 
 	public void paint(Graphics g) {
-		Font font;
 		size = this.getSize();
-		imgBuffer = createImage(size.width, size.height);
+		int width = size.width;
+		int height = size.height;
+		int strWidth, strHeight = 0;
+		String time = getStringTime(hour, min, sec);
+		imgBuffer = createImage(width, height);
 		buffer = imgBuffer.getGraphics();
 
 		if (propFlag) {
 			if (dlg.isFlag()) {
-				font = dlg.getFont();
+				buffer.setFont(dlg.getFont());
 				buffer.setColor(dlg.getTextcolor());
 				this.setBackground(dlg.getBackground());
 
-				oldfont = dlg.getFont();
-				oldTextcolor = dlg.getTextcolor();
-				oldBackground = dlg.getBackground();
+				tmpFont = dlg.getFont();
 			} else {
-				font = oldfont;
-				g.setColor(oldTextcolor);
-				this.setBackground(oldBackground);
+				buffer.setFont(tmpFont);
 			}
 		} else {
-			font = oldfont;
+			buffer.setFont(tmpFont);
 		}
-		this.setSize(this.getWindowWidth(font), this.getWindowHeight(font));
-		buffer.setFont(font);
-		buffer.drawString(hour + ":" + min + ":" + sec, (size.width/2) - font.getSize() -20, size.height/2 + (font.getSize()/2) );
+
+		// フォントサイズによるウィンドウの中央の計算
+		FontMetrics fm = buffer.getFontMetrics();
+		strWidth = fm.stringWidth(time);
+		strHeight = fm.getHeight();
+
+		this.setSize(strWidth + MARGIN * 2, strHeight + MARGIN * 2);
+
+		buffer.drawString(time, (width - strWidth) / 2 , (height + strHeight) / 2 + 15);
 		g.drawImage(imgBuffer, 0, 0, this);
 	}
 
@@ -135,43 +141,23 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 		}
 	}
 
-	public int getWindowWidth(Font font) {
-		int width = 0;
-		if (font.getSize() < 40) {
-			width = 300;
-		} else if (font.getSize() < 50) {
-			width = 350;
-		} else if (font.getSize() < 60) {
-			width = 400;
-		} else if (font.getSize() < 70) {
-			width = 450;
-		} else if (font.getSize() < 80) {
-			width = 500;
-		} else if (font.getSize() < 90) {
-			width = 550;
-		} else {
-			width = 600;
+	public String getStringTime(int h, int m, int s) {
+		String time = "";
+		if (h < 10) {
+			time += "0";
 		}
-		return width;
-	}
+		time += Integer.toString(h) + ":";
 
-	public int getWindowHeight(Font font) {
-		int height = 0;
-		if (font.getSize() < 40) {
-			height = 200;
-		} else if (font.getSize() < 50) {
-			height = 220;
-		} else if (font.getSize() < 60) {
-			height = 240;
-		} else if (font.getSize() < 70) {
-			height = 260;
-		} else if (font.getSize() < 80) {
-			height = 280;
-		} else if (font.getSize() < 90) {
-			height = 300;
-		} else {
-			height = 320;
+		if (m < 10) {
+			time += "0";
 		}
-		return height;
+		time += Integer.toString(m) + ":";
+
+		if (s < 10) {
+			time += "0";
+		}
+		time += Integer.toString(s);
+
+		return time;
 	}
 }

@@ -57,6 +57,7 @@ public class PropertyDialog extends Dialog implements ActionListener {
 
 		this.add(l2);
 
+		fonts.add("7-Segment");
 		fonts.add("Serif");
 		fonts.add("SansSerif");
 		fonts.add("Monospaced");
@@ -97,6 +98,9 @@ public class PropertyDialog extends Dialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("決定")) {
 			switch (fonts.getSelectedItem()) {
+				case "7-Segment":
+					font = new Font("7barSP", 0, Integer.parseInt(fsize.getSelectedItem()));
+					break;
 				case "Serif":
 					font = new Font(Font.SERIF, 0, Integer.parseInt(fsize.getSelectedItem()));
 					break;
