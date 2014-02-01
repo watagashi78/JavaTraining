@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="ch01/src"/>
-	<classpathentry kind="src" path="ch01/test"/>
 	<classpathentry kind="src" path="ch02/src"/>
 	<classpathentry kind="src" path="ch02/test"/>
 	<classpathentry kind="src" path="ch03/src"/>
