@@ -2,29 +2,17 @@
 <classpath>
 	<classpathentry kind="src" path="ch01/src"/>
 	<classpathentry kind="src" path="ch02/src"/>
-	<classpathentry kind="src" path="ch02/test"/>
 	<classpathentry kind="src" path="ch03/src"/>
-	<classpathentry kind="src" path="ch03/test"/>
 	<classpathentry kind="src" path="ch04/src"/>
-	<classpathentry kind="src" path="ch04/test"/>
 	<classpathentry kind="src" path="ch05/src"/>
-	<classpathentry kind="src" path="ch05/test"/>
 	<classpathentry kind="src" path="ch06/src"/>
-	<classpathentry kind="src" path="ch06/test"/>
 	<classpathentry kind="src" path="ch07/src"/>
-	<classpathentry kind="src" path="ch07/test"/>
 	<classpathentry kind="src" path="ch08/src"/>
-	<classpathentry kind="src" path="ch08/test"/>
 	<classpathentry kind="src" path="ch09/src"/>
-	<classpathentry kind="src" path="ch09/test"/>
 	<classpathentry kind="src" path="ch10/src"/>
-	<classpathentry kind="src" path="ch10/test"/>
 	<classpathentry kind="src" path="ch11/src"/>
-	<classpathentry kind="src" path="ch11/test"/>
 	<classpathentry kind="src" path="ch12/src"/>
-	<classpathentry kind="src" path="ch12/test"/>
 	<classpathentry kind="src" path="ch13/src"/>
-	<classpathentry kind="src" path="ch13/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
