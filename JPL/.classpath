@@ -7,11 +7,11 @@
 	<classpathentry excluding="src/" kind="src" path="ch05"/>
 	<classpathentry excluding="src/" kind="src" path="ch06"/>
 	<classpathentry excluding="src/" kind="src" path="ch07"/>
-	<classpathentry excluding="src/" kind="src" path="ch08"/>
+	<classpathentry kind="src" path="ch08"/>
 	<classpathentry excluding="src/" kind="src" path="ch09"/>
 	<classpathentry excluding="src/" kind="src" path="ch10"/>
 	<classpathentry excluding="src/" kind="src" path="ch11"/>
-	<classpathentry excluding="src/" kind="src" path="ch12"/>
+	<classpathentry kind="src" path="ch12"/>
 	<classpathentry excluding="src/" kind="src" path="ch13"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
