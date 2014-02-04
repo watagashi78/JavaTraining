@@ -17,7 +17,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Calendar;
 
-public class DigitalClock extends Window implements Runnable, ActionListener, MouseListener, MouseMotionListener{
+import ex1_3.CascadeMenu.ChangeFlag;
+
+public class DigitalClock extends Window implements Runnable, ActionListener, MouseListener, MouseMotionListener {
 
 	public DigitalClock(Frame paramFrame) {
 		super(paramFrame);
@@ -26,7 +28,9 @@ public class DigitalClock extends Window implements Runnable, ActionListener, Mo
 	private static final int MARGIN = 50;
 	private static int hour, min, sec;
 
-	private Font tmpFont = new Font(Font.MONOSPACED, Font.BOLD, 50);
+	private Font defaultFont = new Font(Font.MONOSPACED, Font.BOLD, 50);
+	private String tmpFont = Font.MONOSPACED;
+	private int tmpFontSize = 50;
 	private Thread thread = new Thread(this);
 	private Dimension size;
 	private Image imgBuffer;
@@ -35,10 +39,9 @@ public class DigitalClock extends Window implements Runnable, ActionListener, Mo
 	private Point dragPoint, position;
 
 	private CascadeMenu menu = new CascadeMenu();
-	private boolean clickFlag = false;
 
 	/**
-	 * 課題1-2のデジタル時計次のように修正してください。
+	 * 課題1-2のデジタル時計を次のように修正してください。
 	 * ・FrameではなくWindowクラスを使用して、フレーム枠のないデジタル時計にする
 	 * ・マウスの右クリックでポップアップしてカスケード形式でプロパティを変更できるようにする
 	 * ・時計内をマウスの左ボタンでクリックしたまま、デスクトップ上でウィンドウを移動できるようにする
@@ -51,7 +54,7 @@ public class DigitalClock extends Window implements Runnable, ActionListener, Mo
 	public void init() {
 		this.setSize(200, 200);
 		this.setLocation(200, 200);
-		this.setFont(tmpFont);
+		this.setFont(defaultFont);
 		this.setBackground(Color.BLUE);
 		this.setVisible(true);
 
@@ -86,13 +89,15 @@ public class DigitalClock extends Window implements Runnable, ActionListener, Mo
 		imgBuffer = createImage(width, height);
 		buffer = imgBuffer.getGraphics();
 
-		if (clickFlag) {
-			buffer.setFont(menu.getFont());
-			
+		if (menu.getFlags() == ChangeFlag.FONT) {
+			buffer.setFont(new Font(menu.getFontString(), 1, tmpFontSize));
+		} else if (menu.getFlags() == ChangeFlag.FONT_SIZE) {
+			buffer.setFont(new Font(tmpFont, 1, menu.getSize()));
+		} else if (menu.getFlags() == ChangeFlag.TEXT_COLOR) {
+			buffer.setColor(menu.getTc());
+		} else if (menu.getFlags() == ChangeFlag.BACKGROUND_COLOR) {
+			this.setBackground(menu.getBc());
 		}
-		
-		buffer.setFont(tmpFont);
-		buffer.setColor(Color.WHITE);
 
 		// フォントサイズによるウィンドウの中央の計算
 		FontMetrics fm = buffer.getFontMetrics();
@@ -101,7 +106,7 @@ public class DigitalClock extends Window implements Runnable, ActionListener, Mo
 
 		this.setSize(strWidth + MARGIN * 2, strHeight + MARGIN * 2);
 
-		buffer.drawString(time, (width - strWidth) / 2 , (height - strHeight) / 2 + MARGIN);
+		buffer.drawString(time, (width - strWidth) / 2, strHeight + MARGIN /2);
 		g.drawImage(imgBuffer, 0, 0, this);
 
 	}
@@ -142,43 +147,46 @@ public class DigitalClock extends Window implements Runnable, ActionListener, Mo
 	}
 
 	Point getScreenLocation(MouseEvent e) {
-	    Point p1 = e.getPoint();
-	    Point p2 = this.getLocationOnScreen();
-	    return new Point(p1.x + p2.x, p1.y + p2.y);
-	  }
+		Point p1 = e.getPoint();
+		Point p2 = this.getLocationOnScreen();
+		return new Point(p1.x + p2.x, p1.y + p2.y);
+	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		Point cursor = getScreenLocation(e);
-	    int xdiff = cursor.x - dragPoint.x;
-	    int ydiff = cursor.y - dragPoint.y;
-	    this.setLocation(position.x + xdiff, position.y + ydiff);
+		int xdiff = cursor.x - dragPoint.x;
+		int ydiff = cursor.y - dragPoint.y;
+		this.setLocation(position.x + xdiff, position.y + ydiff);
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) {
+	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {
+	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		dragPoint = getScreenLocation(e);
-	    position = this.getLocation();
+		position = this.getLocation();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (e.isPopupTrigger()) {
 			menu.show(this, e.getX(), e.getY());
-			clickFlag = true;
 		}
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent e) {}
+	public void mouseEntered(MouseEvent e) {
+	}
 
 	@Override
-	public void mouseExited(MouseEvent e) {}
+	public void mouseExited(MouseEvent e) {
+	}
 
 }

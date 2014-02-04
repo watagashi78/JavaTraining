@@ -1,6 +1,5 @@
 package ex1_3;
 
-import java.awt.CheckboxMenuItem;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Menu;
@@ -8,21 +7,24 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class CascadeMenu extends PopupMenu implements ActionListener {
-	Font font;
-	int size;
-	Color tc;
-	Color bc;
-	
-	int flag;
+public class CascadeMenu extends PopupMenu implements ActionListener, MouseListener {
+	private String font;
+	private int size;
+	private Color tc;
+	private Color bc;
+
+	private ChangeFlag flags;
+	private boolean click = false;
+
 	enum ChangeFlag {
 		FONT,
-		SIZE,
-		T_COLOR,
-		BG_COLOR
+		FONT_SIZE,
+		TEXT_COLOR,
+		BACKGROUND_COLOR
 	}
-
 
 	Menu fonts = new Menu("Font");
 	Menu fontSize = new Menu("Font Size");
@@ -32,11 +34,11 @@ public class CascadeMenu extends PopupMenu implements ActionListener {
 	public CascadeMenu() {
 		this.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
 		this.add(fonts);
-		MenuItem font1 = new MenuItem();
-		MenuItem font2 = new MenuItem();
-		MenuItem font3 = new MenuItem();
-		MenuItem font4 = new MenuItem();
-		MenuItem font5 = new MenuItem();
+		MenuItem font1 = new MenuItem("7-Segment");
+		MenuItem font2 = new MenuItem("Serif");
+		MenuItem font3 = new MenuItem("SansSerif");
+		MenuItem font4 = new MenuItem("Monospaced");
+		MenuItem font5 = new MenuItem("Dialog");
 		fonts.add(font1);
 		fonts.add(font2);
 		fonts.add(font3);
@@ -49,8 +51,8 @@ public class CascadeMenu extends PopupMenu implements ActionListener {
 		font5.addActionListener(this);
 
 		this.add(fontSize);
-		CheckboxMenuItem size1 = new CheckboxMenuItem("20");
-		CheckboxMenuItem size2 = new CheckboxMenuItem("30");
+		MenuItem size1 = new MenuItem("20");
+		MenuItem size2 = new MenuItem("30");
 		MenuItem size3 = new MenuItem("40");
 		MenuItem size4 = new MenuItem("50");
 		MenuItem size5 = new MenuItem("60");
@@ -78,62 +80,38 @@ public class CascadeMenu extends PopupMenu implements ActionListener {
 		size9.addActionListener(this);
 
 		this.add(textColor);
-		MenuItem tcolor1 = new MenuItem();
-		MenuItem tcolor2 = new MenuItem();
-		MenuItem tcolor3 = new MenuItem();
-		MenuItem tcolor4 = new MenuItem();
-		MenuItem tcolor5 = new MenuItem();
-		MenuItem tcolor6 = new MenuItem();
-		MenuItem tcolor7 = new MenuItem();
-		MenuItem tcolor8 = new MenuItem();
-		MenuItem tcolor9 = new MenuItem();
+		MenuItem tcolor1 = new MenuItem("Black");
+		MenuItem tcolor2 = new MenuItem("White");
+		MenuItem tcolor3 = new MenuItem("Red");
+		MenuItem tcolor4 = new MenuItem("Green");
+		MenuItem tcolor5 = new MenuItem("Blue");
 		textColor.add(tcolor1);
 		textColor.add(tcolor2);
 		textColor.add(tcolor3);
 		textColor.add(tcolor4);
 		textColor.add(tcolor5);
-		textColor.add(tcolor6);
-		textColor.add(tcolor7);
-		textColor.add(tcolor8);
-		textColor.add(tcolor9);
 		tcolor1.addActionListener(this);
 		tcolor2.addActionListener(this);
 		tcolor3.addActionListener(this);
 		tcolor4.addActionListener(this);
 		tcolor5.addActionListener(this);
-		tcolor6.addActionListener(this);
-		tcolor7.addActionListener(this);
-		tcolor8.addActionListener(this);
-		tcolor9.addActionListener(this);
 
 		this.add(background);
-		MenuItem bc1 = new MenuItem();
-		MenuItem bc2 = new MenuItem();
-		MenuItem bc3 = new MenuItem();
-		MenuItem bc4 = new MenuItem();
-		MenuItem bc5 = new MenuItem();
-		MenuItem bc6 = new MenuItem();
-		MenuItem bc7 = new MenuItem();
-		MenuItem bc8 = new MenuItem();
-		MenuItem bc9 = new MenuItem();
+		MenuItem bc1 = new MenuItem("Black_BackGround");
+		MenuItem bc2 = new MenuItem("White_BackGround");
+		MenuItem bc3 = new MenuItem("Red_BackGround");
+		MenuItem bc4 = new MenuItem("Green_BackGround");
+		MenuItem bc5 = new MenuItem("Blue_BackGround");
 		background.add(bc1);
 		background.add(bc2);
 		background.add(bc3);
 		background.add(bc4);
 		background.add(bc5);
-		background.add(bc6);
-		background.add(bc7);
-		background.add(bc8);
-		background.add(bc9);
 		bc1.addActionListener(this);
 		bc2.addActionListener(this);
 		bc3.addActionListener(this);
 		bc4.addActionListener(this);
 		bc5.addActionListener(this);
-		bc6.addActionListener(this);
-		bc7.addActionListener(this);
-		bc8.addActionListener(this);
-		bc9.addActionListener(this);
 
 		MenuItem exit = new MenuItem("Exit");
 		this.add(exit);
@@ -142,64 +120,117 @@ public class CascadeMenu extends PopupMenu implements ActionListener {
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		switch (fonts.getActionCommand()) {
+		switch (e.getActionCommand()) {
 			case "7-Segment":
-				font = new Font("7barSP", 0, Integer.parseInt(fontSize.getActionCommand()));
+				font = "7barSP";
+				flags = ChangeFlag.FONT;
 				break;
 			case "Serif":
-				font = new Font(Font.SERIF, 0, Integer.parseInt(fontSize.getActionCommand()));
+				font = Font.SERIF;
+				flags = ChangeFlag.FONT;
 				break;
 			case "SansSerif":
-				font = new Font(Font.SANS_SERIF, 0, Integer.parseInt(fontSize.getActionCommand()));
+				font = Font.SANS_SERIF;
+				flags = ChangeFlag.FONT;
 				break;
 			case "Monospaced":
-				font = new Font(Font.MONOSPACED, 0, Integer.parseInt(fontSize.getActionCommand()));
+				font = Font.MONOSPACED;
+				flags = ChangeFlag.FONT;
 				break;
 			case "Dialog":
-				font = new Font(Font.DIALOG, 0, Integer.parseInt(fontSize.getActionCommand()));
-				break;
-			case "DialogInput":
-				font = new Font(Font.DIALOG_INPUT, 0, Integer.parseInt(fontSize.getActionCommand()));
+				font = Font.DIALOG;
+				flags = ChangeFlag.FONT;
 				break;
 			default:
 				break;
 		}
 
-		switch (textColor.getActionCommand()) {
+		switch (e.getActionCommand()) {
+			case "20":
+				size = 20;
+				flags = ChangeFlag.FONT_SIZE;
+				break;
+			case "30":
+				size = 30;
+				flags = ChangeFlag.FONT_SIZE;
+				break;
+			case "40":
+				size = 40;
+				flags = ChangeFlag.FONT_SIZE;
+				break;
+			case "50":
+				size = 50;
+				flags = ChangeFlag.FONT_SIZE;
+				break;
+			case "60":
+				size = 60;
+				flags = ChangeFlag.FONT_SIZE;
+				break;
+			case "70":
+				size = 70;
+				flags = ChangeFlag.FONT_SIZE;
+				break;
+			case "80":
+				size = 80;
+				flags = ChangeFlag.FONT_SIZE;
+				break;
+			case "90":
+				size = 90;
+				flags = ChangeFlag.FONT_SIZE;
+				break;
+			case "100":
+				size = 100;
+				flags = ChangeFlag.FONT_SIZE;
+				break;
+			default:
+				break;
+		}
+
+		switch (e.getActionCommand()) {
 			case "Black":
 				tc = Color.BLACK;
+				flags = ChangeFlag.TEXT_COLOR;
 				break;
 			case "White":
 				tc = Color.WHITE;
+				flags = ChangeFlag.TEXT_COLOR;
 				break;
 			case "Red":
 				tc = Color.RED;
+				flags = ChangeFlag.TEXT_COLOR;
 				break;
 			case "Green":
 				tc = Color.GREEN;
+				flags = ChangeFlag.TEXT_COLOR;
 				break;
 			case "Blue":
 				tc = Color.BLUE;
+				flags = ChangeFlag.TEXT_COLOR;
 				break;
 			default:
 				break;
 		}
 
-		switch (background.getActionCommand()) {
-			case "Black":
+		switch (e.getActionCommand()) {
+			case "Black_BackGround":
 				bc = Color.BLACK;
+				flags = ChangeFlag.BACKGROUND_COLOR;
 				break;
-			case "White":
+			case "White_BackGround":
 				bc = Color.WHITE;
+				flags = ChangeFlag.BACKGROUND_COLOR;
 				break;
-			case "Red":
+			case "Red_BackGround":
 				bc = Color.RED;
+				flags = ChangeFlag.BACKGROUND_COLOR;
 				break;
-			case "Green":
+			case "Green_BackGround":
 				bc = Color.GREEN;
+				flags = ChangeFlag.BACKGROUND_COLOR;
 				break;
-			case "Blue":
+			case "Blue_BackGround":
 				bc = Color.BLUE;
+				flags = ChangeFlag.BACKGROUND_COLOR;
 				break;
 			default:
 				break;
@@ -208,7 +239,7 @@ public class CascadeMenu extends PopupMenu implements ActionListener {
 		if (e.getActionCommand() == "Exit") System.exit(0);
 	}
 
-	public Font getFont() {
+	public String getFontString() {
 		return font;
 	}
 	public int getSize() {
@@ -220,4 +251,23 @@ public class CascadeMenu extends PopupMenu implements ActionListener {
 	public Color getBc() {
 		return bc;
 	}
+
+	public ChangeFlag getFlags() {
+		return flags;
+	}
+
+	public boolean getClick() {
+		return click;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {click = true;}
+	@Override
+	public void mousePressed(MouseEvent e) {click = true;}
+	@Override
+	public void mouseReleased(MouseEvent e) {click = true;}
+	@Override
+	public void mouseEntered(MouseEvent e) {click = true;}
+	@Override
+	public void mouseExited(MouseEvent e) {click = true;}
 }
