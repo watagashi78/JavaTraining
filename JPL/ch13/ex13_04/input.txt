@@ -1,0 +1,8 @@
+Byte 1
+Short 2
+Integer 3
+Long 4
+Character c
+Float 1.41421356
+Double 3.141592
+Boolean true
