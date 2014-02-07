@@ -7,7 +7,6 @@
 	<classpathentry excluding="src/" kind="src" path="ch05"/>
 	<classpathentry excluding="src/" kind="src" path="ch06"/>
 	<classpathentry excluding="src/" kind="src" path="ch07"/>
-	<classpathentry kind="src" path="ch08"/>
 	<classpathentry excluding="src/" kind="src" path="ch09"/>
 	<classpathentry excluding="src/" kind="src" path="ch10"/>
 	<classpathentry excluding="src/" kind="src" path="ch11"/>
