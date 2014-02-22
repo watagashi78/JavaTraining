@@ -1,4 +1,4 @@
-package ex1_2;
+package src;
 
 import java.awt.Button;
 import java.awt.Choice;

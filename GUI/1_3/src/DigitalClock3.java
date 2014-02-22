@@ -1,4 +1,4 @@
-package ex1_3;
+package src;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,11 +17,12 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Calendar;
 
-import ex1_3.CascadeMenu.ChangeFlag;
+import src.CascadeMenu.ChangeFlag;
 
-public class DigitalClock extends Window implements Runnable, ActionListener, MouseListener, MouseMotionListener {
 
-	public DigitalClock(Frame paramFrame) {
+public class DigitalClock3 extends Window implements Runnable, ActionListener, MouseListener, MouseMotionListener {
+
+	public DigitalClock3(Frame paramFrame) {
 		super(paramFrame);
 	}
 
@@ -47,7 +48,7 @@ public class DigitalClock extends Window implements Runnable, ActionListener, Mo
 	 * ・時計内をマウスの左ボタンでクリックしたまま、デスクトップ上でウィンドウを移動できるようにする
 	 */
 	public static void main(String[] args) {
-		DigitalClock clock = new DigitalClock(new Frame());
+		DigitalClock3 clock = new DigitalClock3(new Frame());
 		clock.init();
 	}
 

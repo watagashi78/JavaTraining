@@ -1,4 +1,4 @@
-package ex1_2;
+package src;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -16,7 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
 
-public class DigitalClock extends Frame implements Runnable, ActionListener {
+public class DigitalClock2 extends Frame implements Runnable, ActionListener {
 	private static int hour, min, sec;
 	private Thread thread = new Thread(this);
 	private PropertyDialog dlg;
@@ -42,12 +42,12 @@ public class DigitalClock extends Frame implements Runnable, ActionListener {
 	 * ・フォントとフォントサイズを変更すると、時計を表示すべきフレームの大きさを適切に自動変更して、正しく表示されるようにする
 	 */
 	public static void main(String[] args) {
-		DigitalClock clock = new DigitalClock("DigitalClock");
+		DigitalClock2 clock = new DigitalClock2("DigitalClock");
 		clock.setSize(600, 200);
 		clock.setVisible(true);
 	}
 
-	DigitalClock(String title) {
+	DigitalClock2(String title) {
 		this.setTitle(title);
 		this.setLayout(new FlowLayout());
 		this.setResizable(false);

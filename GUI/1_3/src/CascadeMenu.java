@@ -1,4 +1,4 @@
-package ex1_3;
+package src;
 
 import java.awt.Color;
 import java.awt.Font;
