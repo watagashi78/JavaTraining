@@ -31,8 +31,6 @@ public class DigitalClock extends Window implements Runnable, ActionListener, Mo
 	private Font defaultFont = new Font(Font.MONOSPACED, Font.BOLD, 50);
 	private String tmpFont = Font.MONOSPACED;
 	private int tmpFontSize = 50;
-	private Color tmptxColor = Color.WHITE;
-	private Color tmpbgColor = Color.BLUE;
 	private Thread thread = new Thread(this);
 	private Dimension size;
 	private Image imgBuffer;
@@ -92,17 +90,14 @@ public class DigitalClock extends Window implements Runnable, ActionListener, Mo
 		buffer = imgBuffer.getGraphics();
 
 		if (menu.getFlags() == ChangeFlag.FONT) {
-			tmpFont = menu.getFontString();
+			buffer.setFont(new Font(menu.getFontString(), 1, tmpFontSize));
 		} else if (menu.getFlags() == ChangeFlag.FONT_SIZE) {
-			tmpFontSize = menu.getSize();
+			buffer.setFont(new Font(tmpFont, 1, menu.getSize()));
 		} else if (menu.getFlags() == ChangeFlag.TEXT_COLOR) {
-			tmptxColor = menu.getTc();
+			buffer.setColor(menu.getTc());
 		} else if (menu.getFlags() == ChangeFlag.BACKGROUND_COLOR) {
-			tmpbgColor = menu.getBc();
+			this.setBackground(menu.getBc());
 		}
-		buffer.setFont(new Font(tmpFont, 1, tmpFontSize));
-		buffer.setColor(tmptxColor);
-		this.setBackground(tmpbgColor);
 
 		// フォントサイズによるウィンドウの中央の計算
 		FontMetrics fm = buffer.getFontMetrics();

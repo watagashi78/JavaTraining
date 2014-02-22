@@ -1,6 +1,5 @@
 package ex05_02;
 
-
 public class BankAccount {
 	private long number;	// 口座番号
 	private long balance;	// 現在の残高(単位はセント)
@@ -30,7 +29,7 @@ public class BankAccount {
 		private Action acts[] = new Action[10];
 		private int index = 0;
 
-		private void add(Action act) {
+		public void add(Action act) {
 			for (int i = acts.length - 1; i > 0; i--) {
 				if (acts[i-1] != null) {
 					acts[i] = acts[i-1];
@@ -48,24 +47,13 @@ public class BankAccount {
 			}
 		}
 
-		private void show() {
+		public void show() {
 			for (Action act: acts) {
 				if (act != null) {
 					System.out.println(act.toString());
 				}
 			}
 		}
-
-		public History(){};
-
-		public History(History his) {
-			System.arraycopy(his.acts, 0, this.acts, 0, his.acts.length);
-		}
-	}
-
-	public History history() {
-		History result = new History(history);
-		return result;
 	}
 
 	public void deposit(long amount) {
