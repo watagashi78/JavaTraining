@@ -1,0 +1,3 @@
+class ex16_02.NestClass.X.Y
+ class ex16_02.NestClass.X
+  class ex16_02.NestClass
