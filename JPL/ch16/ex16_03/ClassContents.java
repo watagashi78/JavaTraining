@@ -48,7 +48,7 @@ public class ClassContents {
 	private static String strip(String str, String stripChar) {
 		String result;
 		if (str.contains(stripChar))
-			result = str.replaceAll(stripChar + "([a-zA-Z]*\\.)*", "");
+			result = str.replaceAll(stripChar + "(\\w*\\.)*", "");
 		else
 			result = str;
 		return result;

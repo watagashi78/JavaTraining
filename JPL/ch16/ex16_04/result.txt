@@ -1,0 +1,2 @@
+@ex16_04.Marker()
+@ex16_04.Hoge(value=hoge)

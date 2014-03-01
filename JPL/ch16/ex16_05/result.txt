@@ -1,0 +1,11 @@
+class ex16_05.SampleClass
+ @ex16_05.StringAnnotation(value=Field)
+ public int ex16_05.SampleClass.a
+ @ex16_05.StringAnnotation(value=Field)
+ public int ex16_05.SampleClass.b
+ @ex16_05.StringAnnotation(value=Field)
+ public int ex16_05.SampleClass.c
+ @ex16_05.StringAnnotation(value=Constructor)
+ public ex16_05.SampleClass()
+ @ex16_05.StringAnnotation(value=Method)
+ public void ex16_05.SampleClass.function(int)
