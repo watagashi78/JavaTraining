@@ -39,7 +39,7 @@ public class ClassContents2 {
 			}
 			String decl = m.toString();
 			System.out.print(" ");
-			System.out.println(strip(decl, "java."));
+			System.out.println(strip(decl, "java"));
 		}
 	}
 
