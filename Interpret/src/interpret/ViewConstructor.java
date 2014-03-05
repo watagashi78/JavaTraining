@@ -8,7 +8,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.List;
-import java.awt.ScrollPane;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,17 +16,19 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Constructor;
+import java.util.Vector;
 
 import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 public class ViewConstructor extends Dialog implements ActionListener, ItemListener {
 	private Model model;
 	private List constList = new List();
 	private DefaultTableModel selected;
-	private ScrollPane spane = new ScrollPane();
 	private JTable tbl = new JTable(5, 2);
-	private TextField tx = new TextField();
+	private TextField tx = new TextField("Please input instance name here.");
 	private Button decide = new Button("Create Constructor");
 	private GridBagLayout gbl = new GridBagLayout();
 
@@ -46,25 +47,19 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 		setLocation(500, 500);
 		setResizable(false);
 
+		addComponent(constList, 0, 0, 1, 6);
+		addComponent(tx, 0, 7, 1, 1);
+		addComponent(tbl, 0, 8, 1, 4);
+		addComponent(decide, 0, 12, 1, 1);
 
-		addComponent(constList, 0, 0, 1, 4);
 		constList.addItemListener(this);
-		spane.add(tbl);
-		addComponent(spane, 0, 5, 1, 3);
-
 		decide.addActionListener(this);
-		addComponent(decide, 0, 8, 1, 2);
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent close) {
 				close.getWindow().dispose();
 			}
 		});
-	}
-
-	public void reset() {
-		spane.remove(tbl);
-		spane.add(tbl);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -93,8 +88,15 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		selected = model.getTableModel(constList.getSelectedItem());
-		tbl = new JTable(selected);
-		reset();
+		selected.addTableModelListener(new TableModelListener() {
+
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				//System.out.println(e.getLastRow() + ", " + e.getColumn());
+				//check(e.getLastRow(), e.getColumn());
+			}
+		});
+		tbl.setModel(selected);
 	}
 
 	private void addComponent(Component c, int x, int y, int w, int h) {
@@ -109,5 +111,65 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbl.setConstraints(c, gbc);
 		add(c);
+	}
+
+	private boolean check() {
+		boolean result = false;
+		String tmpType;
+		Object tmp;
+		Vector data = selected.getDataVector();
+		for (int i = 0; i < selected.getRowCount(); i++) {
+			for (int j = 0; j < selected.getColumnCount(); j++) {
+				tmpType = ((Vector) data.elementAt(i)).elementAt(0).toString();
+				tmp = ((Vector) data.elementAt(i)).elementAt(j).toString();
+				try {
+					tmp = parse(Class.forName(tmpType), tmp.toString());
+					result = true;
+				} catch (ClassNotFoundException e) {
+					System.out.println("Illegal Type Value");
+				}
+			}
+		}
+		return result;
+	}
+
+	private boolean check(int x, int y) {
+		boolean result = false;
+		String tmpType;
+		Object tmp;
+		Vector data = selected.getDataVector();
+		tmpType = ((Vector) data.elementAt(x)).elementAt(0).toString();
+		tmp = ((Vector) data.elementAt(x)).elementAt(y).toString();
+		try {
+			tmp = parse(Class.forName(tmpType), tmp.toString());
+			result = true;
+		} catch (ClassNotFoundException e) {
+			System.out.println("Illegal Type Value");
+		}
+		return result;
+	}
+
+	private Object parse(Class<?> cls, String value) {
+		if (cls == byte.class || cls == Byte.class) {
+			return Byte.parseByte(value);
+		} else if (cls == short.class || cls == Short.class) {
+			return Short.parseShort(value);
+		} else if (cls == int.class || cls == Integer.class) {
+			return Integer.parseInt(value);
+		} else if (cls == long.class || cls == Long.class) {
+			return Long.parseLong(value);
+		} else if (cls == float.class || cls == Float.class) {
+			return Float.parseFloat(value);
+		} else if (cls == double.class || cls == Double.class) {
+			return Double.parseDouble(value);
+		} else if (cls == char.class || cls == Character.class) {
+			return value.charAt(0);
+		} else if (cls == boolean.class || cls == Boolean.class) {
+			return Boolean.parseBoolean(value);
+		} else if (cls == String.class) {
+			return value;
+		} else {
+			throw new UnsupportedOperationException();
+		}
 	}
 }
