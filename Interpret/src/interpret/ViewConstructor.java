@@ -1,5 +1,7 @@
 package interpret;
 
+import interpret.Model.RawData;
+
 import java.awt.Button;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -16,7 +18,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Constructor;
-import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
@@ -26,7 +27,8 @@ import javax.swing.table.DefaultTableModel;
 public class ViewConstructor extends Dialog implements ActionListener, ItemListener {
 	private Model model;
 	private List constList = new List();
-	private DefaultTableModel selected;
+	private DefaultTableModel selectedStringModel;
+	private RawData[] selectedRawData;
 	private JTable tbl = new JTable(5, 2);
 	private TextField tx = new TextField("Please input instance name here.");
 	private Button decide = new Button("Create Constructor");
@@ -87,16 +89,18 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		selected = model.getTableModel(constList.getSelectedItem());
-		selected.addTableModelListener(new TableModelListener() {
+		selectedRawData = model.getRawData(constList.getSelectedItem());
+		selectedStringModel = model.getStringTableModel(constList.getSelectedItem());
+		selectedStringModel.addTableModelListener(new TableModelListener() {
 
 			@Override
 			public void tableChanged(TableModelEvent e) {
-				//System.out.println(e.getLastRow() + ", " + e.getColumn());
-				//check(e.getLastRow(), e.getColumn());
+				String changeData = selectedStringModel.getValueAt(e.getLastRow(), e.getColumn()).toString();
+				Class<?> cls = selectedRawData[e.getLastRow()].getRawClass();
+				selectedRawData[e.getLastRow()].setValue(parse(cls, changeData));
 			}
 		});
-		tbl.setModel(selected);
+		tbl.setModel(selectedStringModel);
 	}
 
 	private void addComponent(Component c, int x, int y, int w, int h) {
@@ -111,42 +115,6 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbl.setConstraints(c, gbc);
 		add(c);
-	}
-
-	private boolean check() {
-		boolean result = false;
-		String tmpType;
-		Object tmp;
-		Vector data = selected.getDataVector();
-		for (int i = 0; i < selected.getRowCount(); i++) {
-			for (int j = 0; j < selected.getColumnCount(); j++) {
-				tmpType = ((Vector) data.elementAt(i)).elementAt(0).toString();
-				tmp = ((Vector) data.elementAt(i)).elementAt(j).toString();
-				try {
-					tmp = parse(Class.forName(tmpType), tmp.toString());
-					result = true;
-				} catch (ClassNotFoundException e) {
-					System.out.println("Illegal Type Value");
-				}
-			}
-		}
-		return result;
-	}
-
-	private boolean check(int x, int y) {
-		boolean result = false;
-		String tmpType;
-		Object tmp;
-		Vector data = selected.getDataVector();
-		tmpType = ((Vector) data.elementAt(x)).elementAt(0).toString();
-		tmp = ((Vector) data.elementAt(x)).elementAt(y).toString();
-		try {
-			tmp = parse(Class.forName(tmpType), tmp.toString());
-			result = true;
-		} catch (ClassNotFoundException e) {
-			System.out.println("Illegal Type Value");
-		}
-		return result;
 	}
 
 	private Object parse(Class<?> cls, String value) {
@@ -168,7 +136,69 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 			return Boolean.parseBoolean(value);
 		} else if (cls == String.class) {
 			return value;
+		} else if (cls == byte[].class || cls == Byte[].class) {
+			String[] str = value.split(",");
+			Byte[] result = new Byte[str.length];
+			for (int i = 0; i < str.length; i++) {
+				result[i] = Byte.parseByte(str[i]);
+			}
+			return result;
+		} else if (cls == short[].class || cls == Short[].class) {
+			String[] str = value.split(",");
+			Short[] result = new Short[str.length];
+			for (int i = 0; i < str.length; i++) {
+				result[i] = Short.parseShort(str[i]);
+			}
+			return result;
+		} else if (cls == int[].class || cls == Integer[].class) {
+			String[] str = value.split(",");
+			Integer[] result = new Integer[str.length];
+			for (int i = 0; i < str.length; i++) {
+				result[i] = Integer.parseInt(str[i]);
+			}
+			return result;
+		} else if (cls == long[].class || cls == Long[].class) {
+			String[] str = value.split(",");
+			Long[] result = new Long[str.length];
+			for (int i = 0; i < str.length; i++) {
+				result[i] = Long.parseLong(str[i]);
+			}
+			return result;
+		} else if (cls == float[].class || cls == Float[].class) {
+			String[] str = value.split(",");
+			Float[] result = new Float[str.length];
+			for (int i = 0; i < str.length; i++) {
+				result[i] = Float.parseFloat(str[i]);
+			}
+			return result;
+		} else if (cls == double[].class || cls == Double[].class) {
+			String[] str = value.split(",");
+			Double[] result = new Double[str.length];
+			for (int i = 0; i < str.length; i++) {
+				result[i] = Double.parseDouble(str[i]);
+			}
+			return result;
+		} else if (cls == char[].class || cls == Character[].class) {
+			String[] str = value.split(",");
+			Character[] result = new Character[str.length];
+			for (int i = 0; i < str.length; i++) {
+				for (int j = i; j < str[i].length(); j++) {
+					result[j] = str[i].charAt(j);
+				}
+			}
+			return result;
+		} else if (cls == boolean[].class || cls == Boolean[].class) {
+			String[] str = value.split(",");
+			Boolean[] result = new Boolean[str.length];
+			for (int i = 0; i < str.length; i++) {
+				result[i] = Boolean.parseBoolean(str[i]);
+			}
+			return result;
+		} else if (cls == String[].class) {
+			String[] result = value.split(",");
+			return result;
 		} else {
+			System.out.println("Class = " + cls + ", Value = :" + value);
 			throw new UnsupportedOperationException();
 		}
 	}

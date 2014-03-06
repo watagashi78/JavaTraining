@@ -15,9 +15,12 @@ public class Model {
 	private EventListenerList listenerList = new EventListenerList();
 
 	private DefaultTreeModel tree;
-	private Map<Field, DefaultTableModel> fieldMap = new HashMap<Field, DefaultTableModel>();
-	private Map<Method, DefaultTableModel> methodMap = new HashMap<Method, DefaultTableModel>();
-	private Map<Constructor<?>, DefaultTableModel> constMap = new HashMap<Constructor<?>, DefaultTableModel>();
+	private Map<Field, RawData[]> fieldMap = new HashMap<Field, RawData[]>();
+	private Map<Method, RawData[]> methodMap = new HashMap<Method, RawData[]>();
+	private Map<Constructor<?>, RawData[]> constMap = new HashMap<Constructor<?>, RawData[]>();
+	private Map<Field, DefaultTableModel> fieldStringMap = new HashMap<Field, DefaultTableModel>();
+	private Map<Method, DefaultTableModel> methodStringMap = new HashMap<Method, DefaultTableModel>();
+	private Map<Constructor<?>, DefaultTableModel> constStringMap = new HashMap<Constructor<?>, DefaultTableModel>();
 
 	private Constructor<?>[] constArr;
 	private Field[] fieldArr;
@@ -53,7 +56,7 @@ public class Model {
 		return methodArr;
 	}
 
-	public DefaultTableModel getTableModel(String str) {
+	public RawData[] getRawData(String str) {
 		for (Field f : fieldArr) {
 			if (strip(f.toString(), "java").equals(str)) {
 				return fieldMap.get(f);
@@ -67,6 +70,25 @@ public class Model {
 		for (Constructor<?> c : constArr) {
 			if (strip(c.toString(), "java").equals(str)) {
 				return constMap.get(c);
+			}
+		}
+		return null;
+	}
+
+	public DefaultTableModel getStringTableModel(String str) {
+		for (Field f : fieldArr) {
+			if (strip(f.toString(), "java").equals(str)) {
+				return fieldStringMap.get(f);
+			}
+		}
+		for (Method m : methodArr) {
+			if (strip(m.toString(), "java").equals(str)) {
+				return methodStringMap.get(m);
+			}
+		}
+		for (Constructor<?> c : constArr) {
+			if (strip(c.toString(), "java").equals(str)) {
+				return constStringMap.get(c);
 			}
 		}
 		return null;
@@ -119,16 +141,19 @@ public class Model {
 	private void createFieldTables(Field[] fields) {
 		String[] columnNames = { "Type", "Value" };
 		for (Field f : fields) {
-			String[][] tbldata = new String[1][2];
-			tbldata[0][0] = f.getType().toString();
+			RawData[] tbldata = new RawData[1];
+			String[][] tblstring = new String[1][2];
+			tblstring[0][0] = f.getType().getSimpleName();
 			try {
-				tbldata[0][1] = f.get(f.getType()).toString();
+				tbldata[0] = new RawData(f.getType(), f.get(f.getType()));
+				tblstring[0][1] = f.get(f.getType()).toString();
 			} catch (IllegalArgumentException e) {
-
+				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-
+				e.printStackTrace();
 			}
-			fieldMap.put(f, new DefaultTableModel(tbldata, columnNames) {
+			fieldMap.put(f, tbldata);
+			fieldStringMap.put(f, new DefaultTableModel(tblstring, columnNames) {
 				boolean[] columnEditables = new boolean[] {false, true};
 				@Override
 				public boolean isCellEditable(int row, int column) {
@@ -142,12 +167,15 @@ public class Model {
 		String[] columnNames = { "Type", "Parameter" };
 		for (Method m : methods) {
 			Class<?>[] classes = m.getParameterTypes();
-			String[][] tbldata = new String[classes.length][2];
+			RawData[] tbldata = new RawData[classes.length];
+			String[][] tblstring = new String[classes.length][2];
 			for (int i = 0; i < classes.length; i++) {
-				tbldata[i][0] = classes[i].toString();
-				tbldata[i][1] = "";
+				tbldata[i] = new RawData(classes[i], "");
+				tblstring[i][0] = classes[i].getSimpleName();
+				tblstring[i][1] = "";
 			}
-			methodMap.put(m, new DefaultTableModel(tbldata, columnNames) {
+			methodMap.put(m, tbldata);
+			methodStringMap.put(m, new DefaultTableModel(tblstring, columnNames) {
 				boolean[] columnEditables = new boolean[] {false, true};
 				@Override
 				public boolean isCellEditable(int row, int column) {
@@ -161,12 +189,15 @@ public class Model {
 		String[] columnNames = { "Type", "Parameter" };
 		for (Constructor<?> c : consts) {
 			Class<?>[] classes = c.getParameterTypes();
-			String[][] tbldata = new String[classes.length][2];
+			RawData[] tbldata = new RawData[classes.length];
+			String[][] tblstring = new String[classes.length][2];
 			for (int i = 0; i < classes.length; i++) {
-				tbldata[i][0] = classes[i].toString();
-				tbldata[i][1] = "";
+				tbldata[i] = new RawData(classes[i], "");
+				tblstring[i][0] = classes[i].getSimpleName();
+				tblstring[i][1] = "";
 			}
-			constMap.put(c, new DefaultTableModel(tbldata, columnNames) {
+			constMap.put(c, tbldata);
+			constStringMap.put(c, new DefaultTableModel(tblstring, columnNames) {
 				boolean[] columnEditables = new boolean[] {false, true};
 				@Override
 				public boolean isCellEditable(int row, int column) {
@@ -174,6 +205,30 @@ public class Model {
 				}
 			});
 		}
+	}
+
+	public class RawData {
+		Class<?> cls;
+		Object obj;
+		public RawData(){
+			this.cls = Object.class;
+			this.obj = new Object();
+		}
+		public RawData(Class<?> cls, Object obj) {
+			this.cls = cls;
+			this.obj = obj;
+		}
+
+		public void setValue(Object obj) {
+			this.obj = obj;
+		}
+		public Class<?> getRawClass() {
+			return cls;
+		}
+		public Object getRawObject() {
+			return obj;
+		}
+
 	}
 
 }
