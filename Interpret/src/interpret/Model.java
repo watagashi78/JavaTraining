@@ -3,18 +3,20 @@ package interpret;
 import java.awt.List;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.tree.DefaultTreeModel;
 
 public class Model {
 	private EventListenerList listenerList = new EventListenerList();
 
-	private DefaultTreeModel tree;
 	private Map<Field, RawData[]> fieldMap = new HashMap<Field, RawData[]>();
 	private Map<Method, RawData[]> methodMap = new HashMap<Method, RawData[]>();
 	private Map<Constructor<?>, RawData[]> constMap = new HashMap<Constructor<?>, RawData[]>();
@@ -22,6 +24,7 @@ public class Model {
 	private Map<Method, DefaultTableModel> methodStringMap = new HashMap<Method, DefaultTableModel>();
 	private Map<Constructor<?>, DefaultTableModel> constStringMap = new HashMap<Constructor<?>, DefaultTableModel>();
 
+	private Object object = new Object();
 	private Constructor<?>[] constArr;
 	private Field[] fieldArr;
 	private Method[] methodArr;
@@ -44,16 +47,53 @@ public class Model {
 		}
 	}
 
+	public Model(Object obj) {
+		this.object = obj;
+		cls = obj.getClass();
+		constArr = cls.getConstructors();
+		fieldArr = getFields(obj);
+		methodArr = getMethods(obj);
+		createConstructorTables(constArr);
+		createFieldTables(fieldArr, obj);
+		createMethodTables(methodArr);
+	}
+
 	// Accessors
 	public Constructor<?>[] getConstructors() {
 		return constArr;
 	}
+
 	public Field[] getFields() {
 		return fieldArr;
 	}
 
+	public Field[] getFields(Object obj) {
+		HashSet<Field> fieldSet = new HashSet<Field>();
+		fieldSet.addAll(Arrays.asList(obj.getClass().getFields()));
+		fieldSet.addAll(Arrays.asList(obj.getClass().getDeclaredFields()));
+		Field[] fields = new Field[fieldSet.size()];
+		fieldSet.toArray(fields);
+		Arrays.sort(fields, new MemberComparator()); // ソート
+		return fields;
+	}
+
+	public Object getFieldValue(Field f, Object obj) throws IllegalAccessException, IllegalArgumentException {
+		f.setAccessible(true);
+		return f.get(obj);
+	}
+
 	public Method[] getMethods() {
 		return methodArr;
+	}
+
+	public Method[] getMethods(Object obj) {
+		HashSet<Method> methodSet = new HashSet<Method>();
+		methodSet.addAll(Arrays.asList(obj.getClass().getMethods()));
+		methodSet.addAll(Arrays.asList(obj.getClass().getDeclaredMethods()));
+		Method[] methods = new Method[methodSet.size()];
+		methodSet.toArray(methods);
+		Arrays.sort(methods, new MemberComparator()); // ソート
+		return methods;
 	}
 
 	public RawData[] getRawData(String str) {
@@ -119,6 +159,10 @@ public class Model {
 		return results;
 	}
 
+	public Object getObject() {
+		return object;
+	}
+
 	// Listeners
 	public void addModelListener(ModelListener listener) {
 		listenerList.add(ModelListener.class, listener);
@@ -141,12 +185,17 @@ public class Model {
 	private void createFieldTables(Field[] fields) {
 		String[] columnNames = { "Type", "Value" };
 		for (Field f : fields) {
+			f.setAccessible(true);
 			RawData[] tbldata = new RawData[1];
 			String[][] tblstring = new String[1][2];
 			tblstring[0][0] = f.getType().getSimpleName();
 			try {
 				tbldata[0] = new RawData(f.getType(), f.get(f.getType()));
-				tblstring[0][1] = f.get(f.getType()).toString();
+				if (f.get(f.getType()) == null) {
+					tblstring[0][1] = "";
+				} else {
+					tblstring[0][1] = f.get(f.getType()).toString();
+				}
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -154,7 +203,37 @@ public class Model {
 			}
 			fieldMap.put(f, tbldata);
 			fieldStringMap.put(f, new DefaultTableModel(tblstring, columnNames) {
-				boolean[] columnEditables = new boolean[] {false, true};
+				boolean[] columnEditables = new boolean[] { false, true };
+				@Override
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+			});
+		}
+	}
+
+	private void createFieldTables(Field[] fields, Object obj) {
+		String[] columnNames = { "Type", "Value" };
+		for (Field f : fields) {
+			f.setAccessible(true);
+			RawData[] tbldata = new RawData[1];
+			String[][] tblstring = new String[1][2];
+			tblstring[0][0] = f.getType().getSimpleName();
+			try {
+				tbldata[0] = new RawData(f.getType(), getFieldValue(f, obj));
+				if (getFieldValue(f, obj) == null) {
+					tblstring[0][1] = "";
+				} else {
+					tblstring[0][1] = getFieldValue(f, obj).toString();
+				}
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			fieldMap.put(f, tbldata);
+			fieldStringMap.put(f, new DefaultTableModel(tblstring, columnNames) {
+				boolean[] columnEditables = new boolean[] { false, true };
 				@Override
 				public boolean isCellEditable(int row, int column) {
 					return columnEditables[column];
@@ -166,6 +245,7 @@ public class Model {
 	private void createMethodTables(Method[] methods) {
 		String[] columnNames = { "Type", "Parameter" };
 		for (Method m : methods) {
+			m.setAccessible(true);
 			Class<?>[] classes = m.getParameterTypes();
 			RawData[] tbldata = new RawData[classes.length];
 			String[][] tblstring = new String[classes.length][2];
@@ -176,7 +256,8 @@ public class Model {
 			}
 			methodMap.put(m, tbldata);
 			methodStringMap.put(m, new DefaultTableModel(tblstring, columnNames) {
-				boolean[] columnEditables = new boolean[] {false, true};
+				boolean[] columnEditables = new boolean[] { false, true };
+
 				@Override
 				public boolean isCellEditable(int row, int column) {
 					return columnEditables[column];
@@ -188,6 +269,7 @@ public class Model {
 	private void createConstructorTables(Constructor<?>[] consts) {
 		String[] columnNames = { "Type", "Parameter" };
 		for (Constructor<?> c : consts) {
+			c.setAccessible(true);
 			Class<?>[] classes = c.getParameterTypes();
 			RawData[] tbldata = new RawData[classes.length];
 			String[][] tblstring = new String[classes.length][2];
@@ -198,7 +280,8 @@ public class Model {
 			}
 			constMap.put(c, tbldata);
 			constStringMap.put(c, new DefaultTableModel(tblstring, columnNames) {
-				boolean[] columnEditables = new boolean[] {false, true};
+				boolean[] columnEditables = new boolean[] { false, true };
+
 				@Override
 				public boolean isCellEditable(int row, int column) {
 					return columnEditables[column];
@@ -210,10 +293,12 @@ public class Model {
 	public class RawData {
 		Class<?> cls;
 		Object obj;
-		public RawData(){
+
+		public RawData() {
 			this.cls = Object.class;
 			this.obj = new Object();
 		}
+
 		public RawData(Class<?> cls, Object obj) {
 			this.cls = cls;
 			this.obj = obj;
@@ -222,13 +307,23 @@ public class Model {
 		public void setValue(Object obj) {
 			this.obj = obj;
 		}
+
 		public Class<?> getRawClass() {
 			return cls;
 		}
+
 		public Object getRawObject() {
 			return obj;
 		}
 
+	}
+	class MemberComparator implements Comparator<Member> {
+		@Override
+		public int compare(Member m1, Member m2) {
+			String s1 = m1.getName();
+			String s2 = m2.getName();
+			return s1.compareTo(s2);
+		}
 	}
 
 }
