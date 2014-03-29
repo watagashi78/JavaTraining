@@ -16,11 +16,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -38,29 +41,34 @@ import javax.swing.table.DefaultTableModel;
 public class View extends Frame implements ModelListener, ActionListener {
 	private final Controller controller = new Controller();
 
-	private static List objectList = new List();
+	private List objectList = new List();
 	private List arrayList = new List();
 	private List fieldList = new List();
 	private List methodList = new List();
 	private JTable fieldTable = new JTable(1, 2);
 	private JTable methodTable = new JTable(8, 2);
 	private JTextArea results = new JTextArea();
-	private static ObjectHolder holder = new ObjectHolder();
-	private static HashMap<String, Model> targetModelMap = new HashMap<String, Model>();
+	private ObjectHolder holder = new ObjectHolder();
+	private HashMap<String, Model> targetModelMap = new HashMap<String, Model>();
 	private Model targetModel;
 	private Field[] targetFields;
 	private Method[] targetMethods;
-	private static ViewConstructor viewConst;
 	private RawData[] selectedMethodRaw;
 	private RawData[] selectedFieldRaw;
 	private DefaultTableModel selectedMethodTableStringModel;
 	private DefaultTableModel selectedFieldTableStringModel;
 	private String targetObjectString;
+	private String targetArrayString;
 	private Method targetMethod;
+	private HashMap<String, Class<?>> classMap = new HashMap<String, Class<?>>();
+	private int arrayCount = 1;
+	private int targetObjectIndex;
+	private int targetArrayIndex;
+	private HashMap<String, Object[]> arrayMap = new HashMap<String, Object[]>();
 
-	public View(Model model) {
+	public View() {
 		initComponents();
-		setModel(model);
+		setVisible(true);
 	}
 
 	public void setModel(Model model) {
@@ -79,6 +87,7 @@ public class View extends Frame implements ModelListener, ActionListener {
 	}
 
 	public void initComponents() {
+		setModel(new Model());
 		setTitle("Interpret");
 		setSize(800, 700);
 		setResizable(false);
@@ -97,7 +106,9 @@ public class View extends Frame implements ModelListener, ActionListener {
 		// [File] - [New] - [Object]
 		Menu menuNew = new Menu("New... ");
 		MenuItem newObject = new MenuItem("Object");
+		MenuItem newArray = new MenuItem("Array");
 		menuNew.add(newObject);
+		menuNew.add(newArray);
 		menuNew.addActionListener(this);
 		menuFile.add(menuNew);
 
@@ -115,6 +126,7 @@ public class View extends Frame implements ModelListener, ActionListener {
 		JPanel objectPane = new JPanel();
 		objectPane.setLayout(new BorderLayout());
 		Label l1 = new Label(" Object");
+		l1.addMouseListener(new TargetObjectLabelDoubleClickListener());
 		objectList.addItemListener(new TargetObjectChangedListener());
 		objectPane.add("North", l1);
 		objectPane.add("Center", objectList);
@@ -125,10 +137,11 @@ public class View extends Frame implements ModelListener, ActionListener {
 		JPanel arrayPane = new JPanel();
 		arrayPane.setLayout(new BorderLayout());
 		Label l4 = new Label(" Array");
+		l4.addMouseListener(new TargetArrayLabelDoubleClickListener());
 		arrayList.addItemListener(new TargetArrayChangedListener());
+		arrayList.addMouseListener(new TargetArrayDoubleClickListener());
 		arrayPane.add("North", l4);
-		arrayPane.add("Center", arrayList);
-		arrayPane.setBounds(10, 350, 150, 340);
+		arrayPane.add("Center", arrayList);		arrayPane.setBounds(10, 350, 150, 340);
 		add(arrayPane);
 
 		// Field List Panel
@@ -175,9 +188,20 @@ public class View extends Frame implements ModelListener, ActionListener {
 		JScrollPane result = new JScrollPane(results, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		results.setEditable(false);
+		results.append("オブジェクトや配列を作成するには以下のどちらかを実行してください\n");
+		results.append("　・上部メニューの [File] - [New...] から選択\n");
+		results.append("　・画面の [Object] または [Array] の文字をダブルクリック\n");
 		results.append(" \n \n \n \n \n \n");
 		result.setBounds(170, 455, 620, 235);
 		add(result);
+	}
+
+	@SuppressWarnings("deprecation")
+	public void cleanListMethod() {
+		fieldList.clear();
+		methodList.clear();
+		fieldTable.setModel(new DefaultTableModel());
+		methodTable.setModel(new DefaultTableModel());
 	}
 
 	@Override
@@ -185,6 +209,9 @@ public class View extends Frame implements ModelListener, ActionListener {
 		switch (e.getActionCommand()) {
 		case "Object":
 			pushObjectButton();
+			break;
+		case "Array":
+			pushArrayButton();
 			break;
 		case "Exit":
 			System.exit(0);
@@ -202,7 +229,45 @@ public class View extends Frame implements ModelListener, ActionListener {
 		if (value == null) {
 			return;
 		} else {
-			viewConst = new ViewConstructor(View.this, new Model(value));
+			new ViewConstructor(this, new Model(value));
+		}
+	}
+
+	private void pushArrayButton() {
+		String clsStr = JOptionPane.showInputDialog(this, "Please Input Class for Array: ", "java.awt.Color");
+		String lengthStr;
+		Class<?> cls = null;
+		int length;
+		if (clsStr == null) {
+			return;
+		} else {
+			lengthStr  = JOptionPane.showInputDialog(this, "Please Input Array Length: ", "3");
+			if (lengthStr == null) return;
+			length = Integer.parseInt(lengthStr);
+			if (length > 0) {
+				try {
+					cls = Class.forName(clsStr);
+					String arrayKey = cls.getSimpleName() + arrayCount;
+					Object[] arrayValue = (Object[]) Array.newInstance(cls, length);
+					arrayMap.put(arrayKey, arrayValue);
+					for (int i = 0; i < length; i++) {
+						String objectkey = cls.getSimpleName() + arrayCount + "[" + i + "]";
+						String str = objectkey + " = null";
+						arrayList.add(str);
+						classMap.put(objectkey, cls);
+					}
+					System.out.println("配列が生成されました : " + cls.getSimpleName() + arrayCount);
+					System.out.println("生成された配列の要素をダブルクリックするとオブジェクトを生成できます");
+					arrayCount++;
+				} catch (ClassNotFoundException e) {
+					System.out.println("Unknown Class: " + clsStr);
+				} catch (NullPointerException e) {
+					System.out.println("Unknown Class: " + clsStr);
+				}
+			} else {
+				System.out.println("Please Input Number > 0");
+				return;
+			}
 		}
 	}
 
@@ -222,8 +287,6 @@ public class View extends Frame implements ModelListener, ActionListener {
 					System.out.println("メソッドが正しく実行されました. (Void)");
 				} else {
 					System.out.println("メソッドの戻り値: " + retObject);
-					System.out.println("戻り値をオブジェクトリストに自動的に追加します");
-					addObjectList(retObject);
 				}
 			} catch (Throwable e1) {
 				System.out.println(e1.toString());
@@ -232,19 +295,32 @@ public class View extends Frame implements ModelListener, ActionListener {
 			System.out.println("メソッドの引数の値が不正です. Param = " + wrongParam);
 	}
 
+	private void createViewArrayWindow(String str) {
+		new ViewArray(this, new Model(str));
+	}
+
 	class TargetObjectChangedListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			if (!objectList.getSelectedItem().equals(targetObjectString)) {
-				updateTargetObject(objectList.getSelectedItem());
-			}
+			targetObjectString = objectList.getSelectedItem();
+			targetObjectIndex = objectList.getSelectedIndex();
+			arrayList.deselect(targetArrayIndex);
+			updateTargetObject(targetObjectString);
 		}
 	}
 
 	class TargetArrayChangedListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-
+			targetArrayString = arrayList.getSelectedItem();
+			targetArrayIndex = arrayList.getSelectedIndex();
+			objectList.deselect(targetObjectIndex);
+			if (targetArrayString == null || targetArrayString.contains("null")) {
+				cleanListMethod();
+			} else {
+				String key = targetArrayString.replaceAll("\\w*\\[\\d*\\] = ", "");
+				updateTargetObject(key);
+			}
 		}
 	}
 
@@ -261,7 +337,21 @@ public class View extends Frame implements ModelListener, ActionListener {
 					Object retObj = null;
 					Class<?> cls = selectedFieldRaw[e.getLastRow()].getRawClass();
 					try {
-						retObj = Utilities.parse(cls, changeData);
+						if (cls.isArray()) {
+							retObj = arrayMap.get(changeData);
+							if (retObj != null) {
+								;
+							} else {
+								retObj = Utilities.parse(cls, changeData);
+							}
+						} else {
+							retObj = holder.getObject(changeData);
+							if (retObj != null) {
+								;
+							} else {
+								retObj = Utilities.parse(cls, changeData);
+							}
+						}
 						selectedFieldRaw[e.getLastRow()].setValue(retObj);
 						System.out.println("フィールドに値がセットされました. Type = " + cls.getSimpleName() + ", Value = "
 								+ changeData);
@@ -292,11 +382,20 @@ public class View extends Frame implements ModelListener, ActionListener {
 					Object retObj = null;
 					Class<?> cls = selectedMethodRaw[e.getLastRow()].getRawClass();
 					try {
-						retObj = holder.getObject(changeData);
-						if (retObj != null && retObj.getClass().equals(cls)) {
-							retObj = holder.getObject(changeData);
+						if (cls.isArray()) {
+							retObj = arrayMap.get(changeData);
+							if (retObj != null) {
+								;
+							} else {
+								retObj = Utilities.parse(cls, changeData);
+							}
 						} else {
-							retObj = Utilities.parse(cls, changeData);
+							retObj = holder.getObject(changeData);
+							if (retObj != null) {
+								;
+							} else {
+								retObj = Utilities.parse(cls, changeData);
+							}
 						}
 						selectedMethodRaw[e.getLastRow()].setValue(retObj);
 						System.out.println("メソッドの引数に値がセットされました. Param = " + e.getLastRow() + ", Type = "
@@ -313,15 +412,62 @@ public class View extends Frame implements ModelListener, ActionListener {
 		}
 	}
 
-	public ObjectHolder getHolder() {
-		return holder;
+	class TargetArrayDoubleClickListener implements MouseListener {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				if (targetArrayString != null && targetArrayString.contains("null")) {
+					String key = targetArrayString.replaceFirst(" = null", "");
+					String cls = classMap.get(key).getName();
+					createViewArrayWindow(cls);
+				}
+			}
+		}
+		@Override
+		public void mousePressed(MouseEvent e) {}
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
+
 	}
 
-	public void setHolder(Object obj) {
-		holder.addObject(obj);
+	class TargetObjectLabelDoubleClickListener implements MouseListener {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				pushObjectButton();
+			}
+		}
+		@Override
+		public void mousePressed(MouseEvent e) {}
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
+	}
+	class TargetArrayLabelDoubleClickListener implements MouseListener {
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			if (e.getClickCount() == 2) {
+				pushArrayButton();
+			}
+		}
+		@Override
+		public void mousePressed(MouseEvent e) {}
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
 	}
 
-	private static void redirectConsole(final JTextArea ta) {
+	private void redirectConsole(final JTextArea ta) {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream() {
 			@Override
 			public synchronized void flush() throws IOException {
@@ -334,29 +480,17 @@ public class View extends Frame implements ModelListener, ActionListener {
 		System.setOut(out);
 	}
 
-	@SuppressWarnings("deprecation")
 	public void updateTargetObject(String key) {
 		targetObjectString = key;
 		targetModel = targetModelMap.get(key);
 		targetFields = targetModel.getFields();
 		targetMethods = targetModel.getMethods();
-		fieldList.clear();
-		methodList.clear();
-		fieldTable.setModel(new DefaultTableModel());
-		methodTable.setModel(new DefaultTableModel());
+		cleanListMethod();
 		for (Field f : targetFields) {
 			fieldList.add(Utilities.strip(f.toString(), "java"));
 		}
 		for (Method m : targetMethods) {
 			methodList.add(Utilities.strip(m.toString(), "java"));
-		}
-	}
-
-	public static void addObjectList() {
-		if (viewConst.getNewObject() != null) {
-			String key = holder.addObject(viewConst.getNewObject());
-			objectList.add(key);
-			targetModelMap.put(key, new Model(viewConst.getNewObject()));
 		}
 	}
 
@@ -366,4 +500,23 @@ public class View extends Frame implements ModelListener, ActionListener {
 		targetModelMap.put(key, new Model(obj));
 	}
 
+	public void addArrayList(Object obj) {
+		String key = holder.addObject(obj);
+		String str = targetArrayString.replace("null", key);
+		String arrKey = targetArrayString.replaceAll("\\[\\d*\\] = null", "");
+		String split = targetArrayString.replaceAll("\\w*\\[", "");
+		String indexStr = split.replaceAll("\\] = null", "");
+		int index = Integer.parseInt(indexStr);
+		Object[] replaceObj = arrayMap.get(arrKey);
+		replaceObj[index] = obj;
+		arrayMap.put(arrKey, replaceObj);
+		holder.addArrayObject(arrKey, replaceObj);
+		arrayList.remove(targetArrayIndex);
+		arrayList.add(str, targetArrayIndex);
+		targetModelMap.put(key, new Model(obj));
+	}
+
+	public ObjectHolder getHolder() {
+		return holder;
+	}
 }

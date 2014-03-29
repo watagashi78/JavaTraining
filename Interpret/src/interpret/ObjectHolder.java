@@ -12,6 +12,10 @@ public class ObjectHolder {
 		return key;
 	}
 
+	public void addArrayObject(String key, Object obj) {
+		objMap.put(key, obj);
+	}
+
 	public Object getObject(String key) {
 		return objMap.get(key);
 	}

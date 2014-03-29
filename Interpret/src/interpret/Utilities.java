@@ -44,8 +44,21 @@ public class Utilities {
 		} catch (InvocationTargetException e) {
 			throw e.getCause();
 		}
-
 		return retObj;
+	}
+
+	public static void invokeMainMethod(Method m, Object obj) throws Throwable {
+		String[] input = null;
+		m.setAccessible(true);
+		try {
+			m.invoke(obj, (Object) input);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(e);
+		} catch (IllegalAccessException e) {
+			throw new IllegalAccessException(e.toString());
+		} catch (InvocationTargetException e) {
+			throw e.getCause();
+		}
 	}
 
 	public static Object parse(Class<?> cls, String value) {

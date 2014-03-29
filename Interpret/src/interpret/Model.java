@@ -143,6 +143,10 @@ public class Model {
 		return null;
 	}
 
+	public Class<?> getModelClass() {
+		return cls;
+	}
+
 	public List getAllStringFields() {
 		List results = new List();
 		for (Field f : fieldArr) {

@@ -25,7 +25,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
-public class ViewConstructor extends Dialog implements ActionListener, ItemListener {
+public class ViewArray extends Dialog implements ActionListener, ItemListener {
 	private Model model;
 	private View view;
 	private List constList = new List();
@@ -40,7 +40,7 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 	private Method main;
 	private ObjectHolder holder;
 
-	public ViewConstructor(View view, Model model) {
+	public ViewArray(View view, Model model) {
 		super(view);
 		this.view = view;
 		this.model = model;
@@ -85,7 +85,7 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 				System.out.println("オブジェクトが生成されました : " + selectConstructor.getName() + "(" + Arrays.toString(selectConstructor.getParameterTypes()) +")");
 				try {
 					newObject = Utilities.createNewObject(selectConstructor, selectedRawData);
-					view.addObjectList(newObject);
+					view.addArrayList(newObject);
 					if(checkMainMethod(newObject)) {
 						Utilities.invokeMainMethod(main, newObject);
 					}
@@ -98,12 +98,8 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 	}
 
 	private void addList(Constructor<?>[] consts) {
-		try {
-			for (Constructor<?> c : consts) {
-				constList.add(Utilities.strip(c.toString(), "java"));
-			}
-		} catch (NullPointerException e) {
-			;
+		for (Constructor<?> c : consts) {
+			constList.add(Utilities.strip(c.toString(), "java"));
 		}
 	}
 
