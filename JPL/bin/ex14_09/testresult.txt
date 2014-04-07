@@ -1,0 +1,99 @@
+  *** Print Current Thread List ***
+RootThreadGroup = [A]
+ThreadGroup = [A], ActiveThread = 9
+Thread = [a2]
+ThreadGroup = [B1], ActiveThread = 5
+Thread = [b11]
+ThreadGroup = [C1], ActiveThread = 1
+Thread = [c11]
+ThreadGroup = [C2], ActiveThread = 3
+Thread = [c21]
+Thread = [c22]
+Thread = [c23]
+ThreadGroup = [B2], ActiveThread = 1
+Thread = [b21]
+ThreadGroup = [B3], ActiveThread = 2
+Thread = [b31]
+Thread = [b32]
+  *** Print Current Thread List ***
+RootThreadGroup = [A]
+ThreadGroup = [A], ActiveThread = 6
+Thread = [a2]
+ThreadGroup = [B1], ActiveThread = 4
+Thread = [b11]
+ThreadGroup = [C1], ActiveThread = 0
+ThreadGroup = [C2], ActiveThread = 3
+Thread = [c21]
+Thread = [c22]
+Thread = [c23]
+ThreadGroup = [B2], ActiveThread = 0
+ThreadGroup = [B3], ActiveThread = 1
+Thread = [b32]
+  *** Print Current Thread List ***
+RootThreadGroup = [A]
+ThreadGroup = [A], ActiveThread = 3
+ThreadGroup = [B1], ActiveThread = 2
+ThreadGroup = [C1], ActiveThread = 0
+ThreadGroup = [C2], ActiveThread = 2
+Thread = [c21]
+Thread = [c22]
+ThreadGroup = [B2], ActiveThread = 0
+ThreadGroup = [B3], ActiveThread = 1
+Thread = [b32]
+  *** Print Current Thread List ***
+RootThreadGroup = [A]
+ThreadGroup = [A], ActiveThread = 2
+ThreadGroup = [B1], ActiveThread = 1
+ThreadGroup = [C1], ActiveThread = 0
+ThreadGroup = [C2], ActiveThread = 1
+Thread = [c21]
+ThreadGroup = [B2], ActiveThread = 0
+ThreadGroup = [B3], ActiveThread = 1
+Thread = [b32]
+  *** Print Current Thread List ***
+RootThreadGroup = [A]
+ThreadGroup = [A], ActiveThread = 1
+ThreadGroup = [B1], ActiveThread = 1
+ThreadGroup = [C1], ActiveThread = 0
+ThreadGroup = [C2], ActiveThread = 1
+Thread = [c21]
+ThreadGroup = [B2], ActiveThread = 0
+ThreadGroup = [B3], ActiveThread = 0
+  *** Print Current Thread List ***
+RootThreadGroup = [A]
+ThreadGroup = [A], ActiveThread = 0
+ThreadGroup = [B1], ActiveThread = 0
+ThreadGroup = [C1], ActiveThread = 0
+ThreadGroup = [C2], ActiveThread = 0
+ThreadGroup = [B2], ActiveThread = 0
+ThreadGroup = [B3], ActiveThread = 0
+********** RETURN FIRST **********
+  *** Print Current Thread List ***
+RootThreadGroup = [A]
+ThreadGroup = [A], ActiveThread = 0
+ThreadGroup = [B1], ActiveThread = 0
+ThreadGroup = [C1], ActiveThread = 0
+ThreadGroup = [C2], ActiveThread = 0
+ThreadGroup = [B2], ActiveThread = 0
+ThreadGroup = [B3], ActiveThread = 0
+  *** Print Current Thread List ***
+RootThreadGroup = [A]
+ThreadGroup = [A], ActiveThread = 9
+Thread = [a2]
+ThreadGroup = [B1], ActiveThread = 5
+Thread = [b11]
+ThreadGroup = [C1], ActiveThread = 1
+Thread = [c11]
+ThreadGroup = [C2], ActiveThread = 3
+Thread = [c21]
+Thread = [c22]
+Thread = [c23]
+ThreadGroup = [B2], ActiveThread = 1
+Thread = [b21]
+ThreadGroup = [B3], ActiveThread = 2
+Thread = [b31]
+Thread = [b32]
+
+
+
+...To be Continued
