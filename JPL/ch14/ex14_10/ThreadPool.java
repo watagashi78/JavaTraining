@@ -18,10 +18,15 @@ import java.util.Queue;
  *  Don't use java.util.concurrent package.
  */
 public class ThreadPool {
-	private final Poolworker[] pool;
+	private final WorkerThread[] pool;
 	private final Queue<Runnable> queue;
 	private final int queueSize;
-	private boolean isStarted;
+
+	enum MyState {
+		INIT, START, STOP;
+	}
+
+	private MyState state = MyState.INIT;
 
 	/**
 	 * Constructs ThreadPool.
@@ -36,11 +41,11 @@ public class ThreadPool {
 		if (queueSize < 1 || numberOfThreads < 1)
 			throw new IllegalArgumentException();
 		this.queueSize = queueSize;
-		this.pool = new Poolworker[numberOfThreads];
+		this.pool = new WorkerThread[numberOfThreads];
 		this.queue = new LinkedList<Runnable>();
 
 		for (int i = 0; i < pool.length; i++) {
-			this.pool[i] = new Poolworker();
+			this.pool[i] = new WorkerThread();
 		}
 
 	}
@@ -51,17 +56,17 @@ public class ThreadPool {
 	 * @throws IllegalStateException if threads has been already started.
 	 */
 	public void start() {
-		if (isStarted)
+		if (state == MyState.START)
 			throw new IllegalStateException();
 		for (int i = 0; i < pool.length; i++) {
 			try {
-				this.pool[i] = new Poolworker();
+				this.pool[i] = new WorkerThread();
 				this.pool[i].start();
 			} catch (IllegalStateException e) {
 				throw new IllegalStateException(e);
 			}
 		}
-		this.isStarted = true;
+		state = MyState.START;
 	}
 
 	/**
@@ -70,16 +75,16 @@ public class ThreadPool {
 	 * @throws IllegalStateException if threads has not been started.
 	 */
 	public void stop() {
+		if (state != MyState.START) {
+			throw new IllegalStateException();
+		}
+		state = MyState.STOP;
 		for (int i = 0; i < pool.length; i++) {
-			if (pool[i].isAlive()) {
-				pool[i].stopThread();
-				try {
-					pool[i].join();
-				} catch (InterruptedException e) {
-					System.out.println(e);
-				}
-			} else {
-				throw new IllegalStateException();
+			pool[i].stopRequest();
+			try {
+				pool[i].join();
+			} catch (InterruptedException e) {
+				System.out.println(e);
 			}
 		}
 	}
@@ -97,7 +102,7 @@ public class ThreadPool {
 	public synchronized void dispatch(Runnable runnable) {
 		if (runnable == null)
 			throw new NullPointerException();
-		if (!isStarted)
+		if (state != MyState.START)
 			throw new IllegalStateException();
 		synchronized (queue) {
 			if (queue.size() > queueSize) {
@@ -113,11 +118,8 @@ public class ThreadPool {
 
 	}
 
-	private class Poolworker extends Thread {
-		private boolean isInterrupted;
-
-		public void stopThread() {
-			isInterrupted = true;
+	private class WorkerThread extends Thread {
+		public void stopRequest() {
 			synchronized (queue) {
 				queue.notifyAll();
 			}
@@ -126,21 +128,23 @@ public class ThreadPool {
 		@Override
 		public void run() {
 			Runnable runnable;
-			while (!isInterrupted) {
+			while (state != MyState.STOP) {
 				synchronized (queue) {
-					while (!isInterrupted && queue.isEmpty()) {
-						try {
-							queue.wait();
-						} catch (InterruptedException e) {
-							System.out.println(e);
+					while (queue.isEmpty()) {
+						if (state == MyState.START) {
+							try {
+								queue.wait();
+							} catch (InterruptedException e) {
+								System.out.println(e);
+							}
 						}
+						if (state == MyState.STOP && queue.isEmpty())
+							return;
 					}
-					runnable = (Runnable) queue.poll();
-					if (runnable != null)
-						queue.notifyAll();
+					runnable = queue.remove();
+					queue.notifyAll();
 				}
-				if (runnable != null)
-					runnable.run();
+				runnable.run();
 			}
 		}
 	}
