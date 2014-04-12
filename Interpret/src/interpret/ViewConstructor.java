@@ -82,17 +82,19 @@ public class ViewConstructor extends Dialog implements ActionListener, ItemListe
 				}
 			}
 			if (isCorrect) {
-				System.out.println("オブジェクトが生成されました : " + selectConstructor.getName() + "(" + Arrays.toString(selectConstructor.getParameterTypes()) +")");
 				try {
 					newObject = Utilities.createNewObject(selectConstructor, selectedRawData);
 					view.addObjectList(newObject);
 					if(checkMainMethod(newObject)) {
 						Utilities.invokeMainMethod(main, newObject);
 					}
+				System.out.println("オブジェクトが生成されました : " + selectConstructor.getName() + "(" + Arrays.toString(selectConstructor.getParameterTypes()) +")");
+				this.dispose();
+				} catch (NumberFormatException e1) {
+					System.out.println(e1);
 				} catch (Throwable e1) {
 					e1.printStackTrace();
 				}
-				this.dispose();
 			} else System.out.println("不正な値です. Param = " + wrongParam);
 		}
 	}
