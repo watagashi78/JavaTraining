@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -112,7 +113,44 @@ public class Model {
 				return constMap.get(c);
 			}
 		}
-		return null;
+		throw new AssertionError("Member not Found.");
+	}
+
+	public void setRawFieldData(String str, Object setObj)  {
+		RawData[] data = null;
+		Field field = null;
+		for (Field f : fieldArr) {
+			if (strip(f.toString(), "java").equals(str)) {
+				data = fieldMap.get(f);
+				field = f;
+			}
+		}
+		if (data == null || field == null) throw new AssertionError("Field not Found.");
+		if (data[0].obj.getClass() != setObj.getClass()) throw new IllegalArgumentException("引数の型が不正です");
+		try {
+			field.setAccessible(true);
+			data[0].setValue(setObj);
+			field.set(this.object, setObj);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isStaticField(String str) {
+		Field field = null;
+		for (Field f : fieldArr) {
+			if (strip(f.toString(), "java").equals(str)) {
+				field = f;
+				break;
+			}
+		}
+		if (Modifier.isStatic(field.getModifiers())) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public DefaultTableModel getStringTableModel(String str) {
@@ -131,7 +169,7 @@ public class Model {
 				return constStringMap.get(c);
 			}
 		}
-		return null;
+		throw new AssertionError("Member not Found.");
 	}
 
 	public Constructor<?> getConstructor(String str) {
@@ -140,7 +178,7 @@ public class Model {
 				return c;
 			}
 		}
-		return null;
+		throw new AssertionError("Constructor not Found.");
 	}
 
 	public Class<?> getModelClass() {
@@ -219,6 +257,7 @@ public class Model {
 	private void createFieldTables(Field[] fields, Object obj) {
 		String[] columnNames = { "Type", "Value" };
 		for (Field f : fields) {
+			boolean isStatic = Modifier.isStatic(f.getModifiers());
 			f.setAccessible(true);
 			RawData[] tbldata = new RawData[1];
 			String[][] tblstring = new String[1][2];
@@ -236,13 +275,23 @@ public class Model {
 				e.printStackTrace();
 			}
 			fieldMap.put(f, tbldata);
-			fieldStringMap.put(f, new DefaultTableModel(tblstring, columnNames) {
-				boolean[] columnEditables = new boolean[] { false, true };
-				@Override
-				public boolean isCellEditable(int row, int column) {
-					return columnEditables[column];
-				}
-			});
+			if (isStatic) {
+				fieldStringMap.put(f, new DefaultTableModel(tblstring, columnNames) {
+					boolean[] columnEditables = new boolean[] { false, false };
+					@Override
+					public boolean isCellEditable(int row, int column) {
+						return columnEditables[column];
+					}
+				});
+			} else {
+				fieldStringMap.put(f, new DefaultTableModel(tblstring, columnNames) {
+					boolean[] columnEditables = new boolean[] { false, true };
+					@Override
+					public boolean isCellEditable(int row, int column) {
+						return columnEditables[column];
+					}
+				});
+			}
 		}
 	}
 

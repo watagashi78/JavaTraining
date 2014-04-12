@@ -225,7 +225,7 @@ public class View extends Frame implements ModelListener, ActionListener {
 	}
 
 	private void pushObjectButton() {
-		String value = JOptionPane.showInputDialog(this, "Please Input Class: ", "java.awt.Frame");
+		String value = JOptionPane.showInputDialog(this, "Please Input Class: ", "java.lang.Integer");
 		if (value == null) {
 			return;
 		} else {
@@ -352,13 +352,13 @@ public class View extends Frame implements ModelListener, ActionListener {
 								retObj = Utilities.parse(cls, changeData);
 							}
 						}
+						targetModel.setRawFieldData(fieldList.getSelectedItem(), retObj);
 						selectedFieldRaw[e.getLastRow()].setValue(retObj);
 						System.out.println("フィールドに値がセットされました. Type = " + cls.getSimpleName() + ", Value = "
-								+ changeData);
+									+ changeData);
 					} catch (RuntimeException err) {
 						System.out.println("フィールドの値が不正です. 元の値をセットします.");
-						selectedFieldTableStringModel.setValueAt(selectedFieldRaw[e.getLastRow()].getRawObject(),
-								e.getLastRow(), e.getColumn());
+						selectedFieldTableStringModel.setValueAt(selectedFieldRaw[e.getLastRow()].getRawObject(), e.getLastRow(), e.getColumn());
 					} finally {
 						;
 					}
