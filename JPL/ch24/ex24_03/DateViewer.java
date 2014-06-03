@@ -23,7 +23,7 @@ public class DateViewer {
 		System.out.println("***** " + source + " *****");
 		for (Integer i : DF_INT) {
 			DateFormat df = DateFormat.getDateTimeInstance(i, i, LOC);
-			df.setLenient(false); // df.isLenient? 寛大 : 厳格
+			df.setLenient(true); // df.isLenient? 寛大 : 厳格
 			try {
 				Date date = df.parse(source);
 				System.out.println("** parsed with " + DF_STR[i] + " **");
