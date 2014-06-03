@@ -1,0 +1,56 @@
+﻿寛大バージョン(isLenient = true)
+
+***** 8/29/86 5:00 PM *****
+** Cannot parse with FULL **
+** Cannot parse with LONG **
+** Cannot parse with MEDIUM **
+** parsed with SHORT **
+  FULL: Friday, August 29, 1986 5:00:00 PM JST
+  LONG: August 29, 1986 5:00:00 PM JST
+MEDIUM: Aug 29, 1986 5:00:00 PM
+ SHORT: 8/29/86 5:00 PM
+
+***** Aug 29, 1986 5:00:00 PM *****
+** Cannot parse with FULL **
+** Cannot parse with LONG **
+** parsed with MEDIUM **
+  FULL: Friday, August 29, 1986 5:00:00 PM JST
+  LONG: August 29, 1986 5:00:00 PM JST
+MEDIUM: Aug 29, 1986 5:00:00 PM
+ SHORT: 8/29/86 5:00 PM
+** Cannot parse with SHORT **
+
+***** August 29, 1986 5:00:00 PM EDT *****
+** Cannot parse with FULL **
+** parsed with LONG **
+  FULL: Saturday, August 30, 1986 6:00:00 AM JST
+  LONG: August 30, 1986 6:00:00 AM JST
+MEDIUM: Aug 30, 1986 6:00:00 AM
+ SHORT: 8/30/86 6:00 AM
+** parsed with MEDIUM **
+  FULL: Friday, August 29, 1986 5:00:00 PM JST
+  LONG: August 29, 1986 5:00:00 PM JST
+MEDIUM: Aug 29, 1986 5:00:00 PM
+ SHORT: 8/29/86 5:00 PM
+** Cannot parse with SHORT **
+
+***** Friday, August 29, 1986 5:00:00 PM EDT *****
+** parsed with FULL **
+  FULL: Saturday, August 30, 1986 6:00:00 AM JST
+  LONG: August 30, 1986 6:00:00 AM JST
+MEDIUM: Aug 30, 1986 6:00:00 AM
+ SHORT: 8/30/86 6:00 AM
+** Cannot parse with LONG **
+** Cannot parse with MEDIUM **
+** Cannot parse with SHORT **
+
+***** Monday, August 29, 1986 5:00:00 PM EDT *****
+** parsed with FULL **
+  FULL: Saturday, August 30, 1986 6:00:00 AM JST
+  LONG: August 30, 1986 6:00:00 AM JST
+MEDIUM: Aug 30, 1986 6:00:00 AM
+ SHORT: 8/30/86 6:00 AM
+** Cannot parse with LONG **
+** Cannot parse with MEDIUM **
+** Cannot parse with SHORT **
+
