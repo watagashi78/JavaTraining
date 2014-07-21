@@ -15,11 +15,11 @@ public class DataHandlerTest {
 
 	@Before
 	public void setUp() {
-		File file = new File("test.txt");
+		File file = new File("ch21/ex21_02/test.txt");
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter(file);
-			fw.write("test");
+			fw.write("test text");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -38,7 +38,7 @@ public class DataHandlerTest {
 		byte[] b;
 
 		b = dh.readFile(new File("test.txt"));
-		assertEquals(new String(b), "test");
+		assertEquals(new String(b), "test text");
 
 		Runtime.getRuntime().gc();
 		whm = getLastFileReference(dh);
@@ -46,7 +46,7 @@ public class DataHandlerTest {
 		assertEquals(b, null);
 
 		b = dh.readFile(new File("test.txt"));
-		assertEquals(new String(b), "test");
+		assertEquals(new String(b), "test text");
 	}
 
 	@SuppressWarnings("unchecked")

@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class SortedListTest {
 	private static final String CRLF = System.getProperty("line.separator");
-	private static final String FILE_PATH = "test.txt";
+	private static final String FILE_PATH = "ch21/ex21_01/test.txt";
 	private static final String SAMPLE_TEXT = "b:1" + CRLF + "d:2" + CRLF + "c:3" + CRLF + "a:4";
 
 	@Before

@@ -3,29 +3,16 @@ package ex21_04;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-public class ShortStrings implements ListIterator<String> {
+// Iteratorインタフェースの傘下に同じ役割のクラスが無意味に複数できてしまうので,
+// スーパークラスのメンバをprotectedにして継承すべきだと思います。
+public class ShortStrings extends TextShortStrings implements ListIterator<String> {
 	private ListIterator<String> strings;
-	private String nextShort;
 	private String prevShort;
-	private final int maxLen;
 
 	public ShortStrings(ListIterator<String> strings, int maxLen) {
+		super(strings, maxLen);
 		this.strings = strings;
-		this.maxLen = maxLen;
-		this.nextShort = null;
 		this.prevShort = null;
-	}
-
-	public boolean hasNext() {
-		if (nextShort != null)
-			return true;
-		while (strings.hasNext()) {
-			nextShort = strings.next();
-			if (nextShort.length() <= maxLen)
-				return true;
-		}
-		nextShort = null;
-		return false;
 	}
 
 	public boolean hasPrevious() {
@@ -38,14 +25,6 @@ public class ShortStrings implements ListIterator<String> {
 		}
 		prevShort = null;
 		return false;
-	}
-
-	public String next() {
-		if (nextShort == null && !hasNext())
-			throw new NoSuchElementException();
-		String n = nextShort;
-		nextShort = null;
-		return n;
 	}
 
 	public String previous() {
@@ -62,10 +41,6 @@ public class ShortStrings implements ListIterator<String> {
 
 	public int previousIndex() {
 		return strings.previousIndex();
-	}
-
-	public void remove() {
-		throw new UnsupportedOperationException();
 	}
 
 	public void add(String arg0) {

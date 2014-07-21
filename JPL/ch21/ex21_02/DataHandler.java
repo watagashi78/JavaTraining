@@ -13,7 +13,8 @@ public class DataHandler {
 		byte[] data;
 		if (lastData.containsKey(file)) {
 			data = lastData.get(file);
-			if (data != null) return data;
+			if (data != null)
+				return data;
 		}
 		data = readBytesFromFile(file);
 		lastData.put(file, data);
