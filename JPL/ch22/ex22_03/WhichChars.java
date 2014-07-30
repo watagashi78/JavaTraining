@@ -6,6 +6,11 @@ import java.util.HashMap;
 public class WhichChars {
 	private HashMap<Byte, BitSet> hm = new HashMap<Byte, BitSet>();
 
+	public static void main(String[] args){
+		WhichChars wc = new WhichChars("Testing 1 2 3");
+		System.out.println(wc);
+	}
+
 	public WhichChars(String str) {
 		for (int i = 0; i < str.length(); i++) {
 			byte b = (byte) (str.charAt(i) >>> 8);
