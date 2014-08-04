@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class MyAttrReader2 {
 	public static Attributed readAttrs(Reader source) throws IOException {
+		@SuppressWarnings("resource")
 		Scanner in = new Scanner(source);
 		AttributedImpl attrs = new AttributedImpl();
 		Attr attr = null;

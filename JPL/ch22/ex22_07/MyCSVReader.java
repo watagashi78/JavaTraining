@@ -9,9 +9,8 @@ import java.util.regex.Pattern;
 
 public class MyCSVReader {
 	private static final String LINE_SEPARATOR_PATTERN = "\r\n|[\n\r\u2028\u2029\u0085]";
-	private static final int CELLS = 4;
-
 	public static List<String> readCSV(Readable source) throws IOException {
+		@SuppressWarnings("resource")
 		Scanner in = new Scanner(source);
 		in.useDelimiter(",|" + LINE_SEPARATOR_PATTERN);
 		List<String> vals = new ArrayList<String>();
@@ -26,6 +25,7 @@ public class MyCSVReader {
 	}
 
 	public static List<String[]> readCSVTable(Readable source, int cell_num) throws IOException {
+		@SuppressWarnings("resource")
 		Scanner in = new Scanner(source);
 		List<String[]> vals = new ArrayList<String[]>();
 		String exp = "^(.*)";

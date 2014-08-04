@@ -62,6 +62,7 @@ public class TestMyCSVReader2 extends TestCase {
 	public void testCommaOver() {
 		try {
 			FileReader reader = new FileReader(ERROR_FILE_PATH);
+			@SuppressWarnings("unused")
 			List<String[]> list = MyCSVReader2.readCSVTable(reader, 5);
 			fail();
 		} catch (Exception e) {

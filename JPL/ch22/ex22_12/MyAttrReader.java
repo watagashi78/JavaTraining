@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 public class MyAttrReader {
 	public static Attributed readAttrs(Reader source) throws IOException {
+		@SuppressWarnings("resource")
 		Scanner in = new Scanner(source);
 		AttributedImpl attrs = new AttributedImpl();
 		String exp = "^(.*)\\=(.*)";

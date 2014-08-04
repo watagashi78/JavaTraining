@@ -63,6 +63,7 @@ public class TestMyAttrReader2 {
 	@Test(expected = IOException.class)
 	public void testException1ReadAttrTable() throws IOException {
 		FileReader reader = new FileReader(ERROR_FILE_PATH1);
+		@SuppressWarnings("unused")
 		Attributed attrs = MyAttrReader2.readAttrs(reader);
 		fail();
 	}
@@ -70,6 +71,7 @@ public class TestMyAttrReader2 {
 	@Test(expected = IOException.class)
 	public void testException2ReadAttrTable() throws IOException {
 		FileReader reader = new FileReader(ERROR_FILE_PATH2);
+		@SuppressWarnings("unused")
 		Attributed attrs = MyAttrReader2.readAttrs(reader);
 		fail();
 	}

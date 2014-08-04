@@ -12,6 +12,7 @@ public class MyCSVReader3 {
 	private static final int CELLS = 4;
 
 	public static List<String> readCSV(Readable source) throws IOException {
+		@SuppressWarnings("resource")
 		Scanner in = new Scanner(source);
 		in.useDelimiter(",|" + LINE_SEPARATOR_PATTERN);
 		List<String> vals = new ArrayList<String>();
@@ -26,6 +27,7 @@ public class MyCSVReader3 {
 	}
 
 	public static List<String[]> readCSVTable(Readable source, String exp) throws IOException {
+		@SuppressWarnings("resource")
 		Scanner in = new Scanner(source);
 		List<String[]> vals = new ArrayList<String[]>();
 		Pattern pat = Pattern.compile(exp, Pattern.MULTILINE);
