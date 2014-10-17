@@ -1,0 +1,8 @@
+Pattern = [^(.*),(.*),(.*),(.*)]
+ -> test1 = 16ms, test2 = 890ms
+Pattern = [([^,*].*),([^,*]*),([^,*]*),([^,*]*)]
+ -> test1 = 8ms, test2 = 764ms
+Pattern = [^(.+?),(.+?),(.+?),(.+)]
+ -> test1 = 5ms, test2 = 555ms
+Pattern = [^(.+),(.+),(.+),(.+)]
+ -> test1 = 4ms, test2 = 876ms
